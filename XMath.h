@@ -2,7 +2,10 @@
 // Created by admin on 2018/10/17.
 //
 
-#ifndef XMATH_XMATH_H
-#define XMATH_XMATH_H
+#ifndef _XMATH_H_
+#define _XMATH_H_
 
-#endif //XMATH_XMATH_H
+#include "Matrix.h"
+#include "Vector.h"
+
+#endif //_XMATH_H_
