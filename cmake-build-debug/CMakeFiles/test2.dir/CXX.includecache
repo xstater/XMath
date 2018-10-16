@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+D:/git/XMath/Matrix.h
+array
+-
+ostream
+-
+initializer_list
+-
+exception
+-
+Vector.h
+D:/git/XMath/Vector.h
+
+D:/git/XMath/Vector.h
+fstream
+-
+initializer_list
+-
+math.h
+-
+
+D:/git/XMath/test2.cpp
+iostream
+-
+vector
+-
+Vector.h
+D:/git/XMath/Vector.h
+Matrix.h
+D:/git/XMath/Matrix.h
+math.h
+-
+
