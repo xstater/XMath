@@ -30,5 +30,11 @@ int main(int argc,char *argv[]){
     cout<<m2.det()<<endl;
 
     cout<<m1.inverse()<<endl;
+
+    xmath::Matrix2d<float> m3 = {
+            1,2,
+            3,4
+    };
+    cout<<m3.det()<<endl;
     return  0;
 }
