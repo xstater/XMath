@@ -30,12 +30,6 @@ namespace xmath{
         return translate(-x,-y,-z) * scale(sx,sy,sz) * translate(x,y,z);
     }
 
-    template <class Type>
-    Matrix4d<Type> rotate(Type x,Type y,Type z){
-        return Matrix4d<Type>{
-
-        };
-    }
 }
 
 #endif
