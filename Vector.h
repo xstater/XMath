@@ -14,8 +14,8 @@ namespace xmath{
         return a<0?-a:a;
     }
 
-    template <class Type>
-    constexpr bool float_equal(Type a,Type b){
+    template <class Type1,class Type2>
+    constexpr bool float_equal(Type1 a,Type2 b){
         return _abs(a - b) < XMATH_MIN;
     }
 
