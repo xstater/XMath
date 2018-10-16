@@ -32,6 +32,133 @@ namespace xmath{
     }
 
     template <class Type>
+    class Matrix2d{
+    public:
+        Matrix2d()
+                :m_mat{1,0,
+                       0,1}{}
+
+        Matrix2d(const Type *ptr)
+                :m_mat{ptr[0],ptr[1],
+                       ptr[2],ptr[3]}{}
+
+        Matrix2d(const std::initializer_list<Type> &ilist)
+                :m_mat{ilist.begin()[0],ilist.begin()[1],
+                       ilist.begin()[2],ilist.begin()[3]}{}
+
+        Matrix2d(const Matrix2d<Type> &) = default;
+        Matrix2d(Matrix2d<Type> &&) = default;
+
+        template <class Type2>
+        Matrix2d(const Matrix2d<Type2> &mat)
+                :m_mat{mat[0],mat[1],
+                       mat[2],mat[3]}{}
+
+        ~Matrix2d() = default;
+
+        Matrix2d<Type> &operator=(const Matrix2d<Type> &) = default;
+        Matrix2d<Type> &operator=(Matrix2d<Type> &&) = default;
+
+        Type &operator[](int index)noexcept{
+            return m_mat[index];
+        }
+        const Type &operator[](int index)const noexcept{
+            return m_mat[index];
+        }
+
+        Type &operator()(int i,int j)noexcept{
+            return m_mat[i * 2 + j];
+        }
+        const Type &operator()(int i,int j)const noexcept{
+            return m_mat[i * 2 + j];
+        }
+
+        operator Type*()noexcept{
+            return m_mat.data();
+        }
+        operator const Type*()const noexcept{
+            return m_mat.data();
+        }
+
+        void identity()noexcept{
+            m_mat = std::array<Type,4>{
+                    1,0,
+                    0,1
+            };
+        }
+
+        Matrix2d<Type> operator+(const Matrix2d<Type> &mat) const noexcept{
+            return Matrix2d<Type> {
+                    m_mat[0] + mat[0],m_mat[1] + mat[1],
+                    m_mat[2] + mat[2],m_mat[3] + mat[3]
+            };
+        }
+        Matrix2d<Type> operator-(const Matrix2d<Type> &mat) const noexcept{
+            return Matrix2d<Type> {
+                    m_mat[0] - mat[0],m_mat[1] - mat[1],
+                    m_mat[2] - mat[2],m_mat[3] - mat[3]
+            };
+        }
+
+        Matrix2d<Type> operator+(Type t) const noexcept{
+            return Matrix2d<Type> {
+                    m_mat[0] + t,m_mat[1] + t,
+                    m_mat[2] + t,m_mat[3] + t
+            };
+        }
+        Matrix2d<Type> operator-(Type t) const noexcept{
+            return Matrix2d<Type> {
+                    m_mat[0] - t,m_mat[1] - t,
+                    m_mat[2] - t,m_mat[3] - t
+            };
+        }
+        Matrix2d<Type> operator*(Type t) const noexcept{
+            return Matrix2d<Type> {
+                    m_mat[0] * t,m_mat[1] * t,
+                    m_mat[2] * t,m_mat[3] * t
+            };
+        }
+        Matrix2d<Type> operator/(Type t) const noexcept{
+            return Matrix2d<Type> {
+                    m_mat[0] / t,m_mat[1] / t,
+                    m_mat[2] / t,m_mat[3] / t
+            };
+        }
+
+        Vector2d<Type> operator*(const Vector2d<Type> &vec)const noexcept{
+            return Vector2d<Type>(
+                    vec[0] * m_mat[0] + vec[1] * m_mat[1],
+                    vec[0] * m_mat[2] + vec[1] * m_mat[3]);
+        }
+
+        Matrix2d<Type> operator*(const Matrix2d<Type> &mat)const noexcept{
+            return Matrix2d<Type>{
+                    m_mat[0] * mat[0] + m_mat[1] * mat[2],m_mat[0] * mat[1] + m_mat[1] * mat[3],
+                    m_mat[2] * mat[0] + m_mat[3] * mat[2],m_mat[2] * mat[1] + m_mat[3] * mat[3]
+            };
+        }
+
+        Type det()const noexcept{
+            return m_mat[0] * m_mat[3] - m_mat[1] * m_mat[2];
+        }
+
+        Matrix2d<Type> transpose()noexcept{
+            return Matrix2d<Type>{
+                    m_mat[0],m_mat[2],
+                    m_mat[1],m_mat[3],
+            };
+        }
+
+        friend std::ostream &operator<<(std::ostream &os,const Matrix2d<Type> &mat){
+            return os<<mat[0]<<' '<<mat[1]<<'\n'<<mat[2]<<' '<<mat[3];
+        }
+
+    protected:
+    private:
+        std::array<Type,4> m_mat;
+    };
+
+    template <class Type>
     class Matrix3d{
     public:
         Matrix3d()
@@ -158,7 +285,7 @@ namespace xmath{
             };
         }
         Matrix3d<Type> inverse(){
-            auto d = det();
+            Type d = det();
             if(float_equal(d,0.0))
                 throw matrix_singular();
             auto mt = transpose();
@@ -362,8 +489,8 @@ namespace xmath{
             };
         }
         Matrix4d<Type> inverse(){
-            auto d = det();
-            if(float_equal(d,0.0))
+            Type d = det();
+            if(float_equal(d,0.0f))
                 throw matrix_singular();
             auto mt = transpose();
             //+0 -1 +2 -3
