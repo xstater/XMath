@@ -504,14 +504,17 @@ namespace xmath{
     using Vector2df = Vector2d<float>;
     using Vector2dd = Vector2d<double>;
     using Vector2di = Vector2d<int>;
+	using Vector2dui = Vector2d<unsigned int>;
 
     using Vector3df = Vector3d<float>;
     using Vector3dd = Vector3d<double>;
     using Vector3di = Vector3d<int>;
+	using Vector3dui = Vector3d<unsigned int>;
 
     using Vector4df = Vector4d<float>;
     using Vector4dd = Vector4d<double>;
     using Vector4di = Vector4d<int>;
+	using Vector4dui = Vector4d<unsigned int>;
 }
 
 #undef XMATH_MIN
