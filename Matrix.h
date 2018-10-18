@@ -533,7 +533,21 @@ namespace xmath{
     private:
         std::array<Type,16> m_mat;
     };
-
+	
+	using Matrix2di = Matrix2d<int>;
+	using Matrix2dui = Matrix2d<unsigned int>;
+	using Matrix2df = Matrix2d<float>;
+	using Matrix2dd = Matrix2d<double>;
+	
+	using Matrix3di = Matrix3d<int>;
+	using Matrix3dui = Matrix3d<unsigned int>;
+	using Matrix3df = Matrix3d<float>;
+	using Matrix3dd = Matrix3d<double>;
+	
+	using Matrix4di = Matrix4d<int>;
+	using Matrix4dui = Matrix4d<unsigned int>;
+	using Matrix4df = Matrix4d<float>;
+	using Matrix4dd = Matrix4d<double>;
 }
 
 #endif
