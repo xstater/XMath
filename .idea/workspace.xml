@@ -11,9 +11,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b70429a5-8c6c-485c-9afc-b353ab26e17c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Tools.h" beforeDir="false" afterPath="$PROJECT_DIR$/Tools.h" afterDir="false" />
-    </list>
+    <list default="true" id="b70429a5-8c6c-485c-9afc-b353ab26e17c" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -93,7 +91,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Arecer" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -125,16 +123,15 @@
       <option name="presentableId" value="Default" />
       <updated>1544983275242</updated>
       <workItem from="1544983276569" duration="4051000" />
-      <workItem from="1545033207272" duration="2169000" />
+      <workItem from="1545033207272" duration="2234000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6220000" />
+    <option name="totallyTimeSpent" value="6285000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1488" height="878" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.25314686" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
