@@ -56,6 +56,56 @@ namespace xmath{
         };
     }
 
+    template <class Type>
+    Matrix4d<Type> perspective(Type top,Type buttom,Type left,Type right,Type near,Type far){
+        return Matrix4d<Type>{
+            2.0*near/(right-left),                  0.0,(right+left)/(right-left),                    0.0,
+                              0.0,2.0*near/(top-buttom),(top+buttom)/(top-buttom),                    0.0,
+                              0.0,                  0.0,    (near+far)/(near-far),2.0*near*far/(near-far),
+                              0.0,                  0.0,                     -1.0,                    0.0
+        };
+    }
+
+    template <class Type>
+    Matrix4d<Type> perspective(Type width,Type height,Type near,Type far){
+        return Matrix4d<Type>{
+                2.0*near/width,            0.0,                  0.0,                    0.0,
+                           0.0,2.0*near/height,                  0.0,                    0.0,
+                           0.0,            0.0,(near+far)/(near-far),2.0*near*far/(near-far),
+                           0.0,            0.0,                 -1.0,                    0.0
+        };
+    }
+
+    template <class Type>
+    Matrix4d<Type> perspective_fov(Type fov,Type aspect,Type near,Type far){
+        return Matrix4d<Type>{
+                1.0/std::tan(fov/2.0)/aspect,                  0.0,                  0.0,                    0.0,
+                                         0.0,1.0/std::tan(fov/2.0),                  0.0,                    0.0,
+                                         0.0,                  0.0,(near+far)/(near-far),2.0*near*far/(near-far),
+                                         0.0,                  0.0,                 -1.0,                    0.0
+        };
+    }
+
+    template <class Type>
+    Matrix4d<Type> ortho(Type top,Type buttom,Type left,Type right,Type near,Type far){
+        return Matrix4d<Type>{
+            2.0/(right-left),             0.0,           0.0,(left+right)/(left-right),
+                         0.0,2.0/(top-buttom),           0.0,(buttom+top)/(buttom-top),
+                         0.0,             0.0,2.0/(near-far),    (near+far)/(near-far),
+                         0.0,             0.0,           0.0,                      1.0
+        };
+    }
+
+    template <class Type>
+    Matrix4d<Type> ortho(Type width,Type height,Type near,Type far){
+        return Matrix4d<Type>{
+                2.0/width,       0.0,           0.0,                  0.0,
+                      0.0,2.0/height,           0.0,                  0.0,
+                      0.0,       0.0,2.0/(near-far),(near+far)/(near-far),
+                      0.0,       0.0,           0.0,                  1.0
+        };
+    }
+
 }
 
 #endif
