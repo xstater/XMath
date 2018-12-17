@@ -7,5 +7,6 @@
 
 #include "Matrix.h"
 #include "Vector.h"
+#include "Tools.h"
 
 #endif //_XMATH_H_
