@@ -18,6 +18,12 @@ exception
 Vector.h
 D:/git/XMath/Vector.h
 
+D:/git/XMath/Tools.h
+cmath
+-
+Matrix.h
+D:/git/XMath/Matrix.h
+
 D:/git/XMath/Vector.h
 fstream
 -
@@ -35,6 +41,8 @@ Vector.h
 D:/git/XMath/Vector.h
 Matrix.h
 D:/git/XMath/Matrix.h
+Tools.h
+D:/git/XMath/Tools.h
 math.h
 -
 

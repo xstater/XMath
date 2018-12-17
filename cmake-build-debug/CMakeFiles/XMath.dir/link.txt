@@ -1,3 +1,0 @@
-"D:\CLion 2018.2.2\bin\cmake\win\bin\cmake.exe" -E remove -f CMakeFiles\XMath.dir/objects.a
-D:\mingw64\bin\ar.exe cr CMakeFiles\XMath.dir/objects.a @CMakeFiles\XMath.dir\objects1.rsp
-D:\mingw64\bin\g++.exe -g   -Wl,--whole-archive CMakeFiles\XMath.dir/objects.a -Wl,--no-whole-archive  -o XMath.exe -Wl,--out-implib,libXMath.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\XMath.dir\linklibs.rsp
