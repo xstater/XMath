@@ -2,6 +2,7 @@
 #include <vector>
 #include "Vector.h"
 #include "Matrix.h"
+#include "Tools.h"
 
 #include <math.h>
 
@@ -36,5 +37,9 @@ int main(int argc,char *argv[]){
             3,4
     };
     cout<<m3.det()<<endl;
+
+    xmath::Vector4df raw(1.0,0.0,0.0,1.0);
+    auto now = xmath::rotateZ<float>(0.7858) * raw;
+    cout<<now<<endl;
     return  0;
 }
