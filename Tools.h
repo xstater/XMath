@@ -25,9 +25,35 @@ namespace xmath{
         };
     }
 
+
     template <class Type>
-    Matrix4d<Type> scale(Type x,Type y,Type z,Type sx,Type sy,Type sz){
-        return translate(-x,-y,-z) * scale(sx,sy,sz) * translate(x,y,z);
+    Matrix4d<Type> rotateX(Type angle){
+        return Matrix4d<Type>{
+            1.0,             0.0,             0.0, 0.0,
+            0.0, std::cos(angle),-std::sin(angle), 0.0,
+            0.0, std::sin(angle), std::cos(angle), 0.0,
+            0.0,             0.0,             0.0, 1.0
+        };
+    }
+
+    template <class Type>
+    Matrix4d<Type> rotateY(Type angle){
+        return Matrix4d<Type>{
+            std::cos(angle), 0.0, std::sin(angle), 0.0,
+                        0.0, 1.0,             0.0, 0.0,
+           -std::sin(angle), 0.0, std::cos(angle), 0.0,
+                        0.0, 0.0,             0.0, 1.0
+        };
+    }
+
+    template <class Type>
+    Matrix4d<Type> rotateZ(Type angle){
+        return Matrix4d<Type>{
+                std::cos(angle),-std::sin(angle), 0.0, 0.0,
+                std::sin(angle), std::cos(angle), 0.0, 0.0,
+                            0.0,             1.0, 0.0, 0.0,
+                            0.0,             0.0, 0.0, 1.0
+        };
     }
 
 }
