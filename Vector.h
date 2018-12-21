@@ -147,10 +147,10 @@ namespace xmath{
             return vec1.x * vec2.x + vec1.y * vec2.y;
         }
 
-        int length()const noexcept{
-            return sqrt<Type>(x * x + y * y);
+        Type length()const noexcept{
+            return sqrt(x * x + y * y);
         }
-        int length2()const noexcept{
+        Type length2()const noexcept{
             return x * x + y * y;
         }
 
@@ -315,10 +315,10 @@ namespace xmath{
                                   vec1.x * vec2.y - vec1.y * vec2.x);
         }
 
-        int length()const noexcept{
-            return sqrt<Type>(x * x + y * y + z * z);
+        Type length()const noexcept{
+            return sqrt(x * x + y * y + z * z);
         }
-        int length2()const noexcept{
+        Type length2()const noexcept{
             return x * x + y * y+ z * z;
         }
 
@@ -485,10 +485,10 @@ namespace xmath{
             return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z + vec1.w * vec2.w;
         }
 
-        int length()const noexcept{
-            return sqrt<Type>(x * x + y * y + z * z + w * w);
+        Type length()const noexcept{
+            return sqrt(x * x + y * y + z * z + w * w);
         }
-        int length2()const noexcept{
+        Type length2()const noexcept{
             return x * x + y * y+ z * z + w * w;
         }
 
