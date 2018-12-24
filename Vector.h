@@ -1,522 +1,488 @@
 #ifndef _XMATH_VECTOR_H_
 #define _XMATH_VECTOR_H_
 
-#include <fstream>
-#include <initializer_list>
-#include <math.h>
-
-#define XMATH_MIN 0.0000001
+#include <ios>
+#include <cmath>
 
 namespace xmath{
-
-    template <class Type>
-    constexpr Type _abs(Type a){
-        return a<0?-a:a;
-    }
-
-    template <class Type1,class Type2>
-    constexpr bool float_equal(Type1 a,Type2 b){
-        return _abs(a - b) < XMATH_MIN;
-    }
-
-    template <class Type>
+    template<class Type>
     class Vector2d{
     public:
-        union {
+        union{
             Type x;
-            Type s;
+            Type r;
+            Type u;
         };
-        union {
+        union{
             Type y;
-            Type t;
+            Type g;
+            Type v;
         };
 
-        explicit Vector2d(Type dx,Type dy)
-            :x(dx),y(dy){}
-        Vector2d(const Type *ptr)
-            :x(ptr[0]),y(ptr[1]){}
-        Vector2d(const std::initializer_list<Type> &ilist)
-            :x(ilist.begin()[0]),y(ilist.begin()[1]){}
-        template <class Type2>
-        Vector2d(const Vector2d<Type2> &v)
-            :x(v.x),y(v.y){}
-        Vector2d(const Vector2d<Type> &) = default;
-        Vector2d(Vector2d<Type> &&) = default;
+        Vector2d()
+                :x(0),y(0){}
+        Vector2d(Type dx,Type dy,Type dz)
+                :x(dx),y(dy){}
+        template<class Type2>
+        Vector2d(const Vector2d<Type2> &vec)
+                :x(static_cast<Type>(vec.x)),
+                 y(static_cast<Type>(vec.y)){}
         ~Vector2d() = default;
 
-        Vector2d<Type> &operator=(const Vector2d<Type> &) = default;
-        Vector2d<Type> &operator=(Vector2d<Type> &&) = default;
+        template<class Type2>
+        Vector2d &operator=(const Vector2d<Type2> &vec){
+            x = static_cast<Type>(vec.x);
+            y = static_cast<Type>(vec.y);
+            return *this;
+        }
+
+        const Type &operator[](int index)const noexcept{
+            return *(&x + index);
+        }
+        Type &operator[](int index) noexcept{
+            return *(&x + index);
+        }
 
         operator Type*()noexcept{
-            return &x;
+            return reinterpret_cast<Type>(this);
         }
         operator const Type*()const noexcept{
-            return &x;
+            return reinterpret_cast<Type>(this);
         }
 
-        Type &operator[](int index)noexcept{
-            return (&x)[index];
+        Vector2d operator+(const Vector2d &rhs)const noexcept{
+            return Vector2d(x + rhs.x,y + rhs.y);
         }
-        const Type &operator[](int index)const noexcept{
-            return (&x)[index];
+        Vector2d operator-(const Vector2d &rhs)const noexcept{
+            return Vector2d(x - rhs.x,y - rhs.y);
         }
-
-        Vector2d<Type> operator+(const Vector2d<Type> &vec)const noexcept{
-            return Vector2d<Type>(this->x + vec.x,this->y + vec.y);
+        Vector2d operator*(const Vector2d &rhs)const noexcept{
+            return Vector2d(x * rhs.x,y * rhs.y);
         }
-        Vector2d<Type> operator-(const Vector2d<Type> &vec)const noexcept{
-            return Vector2d<Type>(this->x - vec.x,this->y - vec.y);
-        }
-        Vector2d<Type> operator*(const Vector2d<Type> &vec)const noexcept{
-            return Vector2d<Type>(this->x * vec.x,this->y * vec.y);
-        }
-        Vector2d<Type> operator/(const Vector2d<Type> &vec)const noexcept{
-            return Vector2d<Type>(this->x / vec.x,this->y / vec.y);
+        Vector2d operator/(const Vector2d &rhs)const noexcept{
+            return Vector2d(x / rhs.x,y / rhs.y);
         }
 
-        Vector2d<Type> operator+(Type t)const noexcept{
-            return Vector2d<Type>(this->x + t,this->y + t);
+        Vector2d operator+(const Type &rhs)const noexcept{
+            return Vector2d(x + rhs,y + rhs);
         }
-        Vector2d<Type> operator-(Type t)const noexcept{
-            return Vector2d<Type>(this->x - t,this->y - t);
+        Vector2d operator-(const Type &rhs)const noexcept{
+            return Vector2d(x - rhs,y - rhs);
         }
-        Vector2d<Type> operator*(Type t)const noexcept{
-            return Vector2d<Type>(this->x * t,this->y * t);
+        Vector2d operator*(const Type &rhs)const noexcept{
+            return Vector2d(x * rhs,y * rhs);
         }
-        Vector2d<Type> operator/(Type t)const noexcept{
-            return Vector2d<Type>(this->x / t,this->y / t);
-        }
-        Vector2d<Type> operator-()const noexcept{
-            return Vector2d<Type>(-x,-y);
+        Vector2d operator/(const Type &rhs)const noexcept{
+            return Vector2d(x / rhs,y / rhs);
         }
 
-        Vector2d<Type> &operator+=(const Vector2d<Type> &vec) noexcept{
-            this->x += vec.x;
-            this->y += vec.y;
+
+        Vector2d &operator+=(const Vector2d &rhs)noexcept{
+            x += rhs.x;
+            y += rhs.y;
             return *this;
         }
-        Vector2d<Type> &operator-=(const Vector2d<Type> &vec) noexcept{
-            this->x -= vec.x;
-            this->y -= vec.y;
+        Vector2d &operator-=(const Vector2d &rhs)noexcept{
+            x -= rhs.x;
+            y -= rhs.y;
             return *this;
         }
-        Vector2d<Type> &operator*=(const Vector2d<Type> &vec) noexcept{
-            this->x *= vec.x;
-            this->y *= vec.y;
+        Vector2d &operator*=(const Vector2d &rhs)noexcept{
+            x *= rhs.x;
+            y *= rhs.y;
             return *this;
         }
-        Vector2d<Type> &operator/=(const Vector2d<Type> &vec) noexcept{
-            this->x /= vec.x;
-            this->y /= vec.y;
+        Vector2d &operator/=(const Vector2d &rhs)noexcept{
+            x /= rhs.x;
+            y /= rhs.y;
             return *this;
         }
 
-        Vector2d<Type> &operator+=(Type t) noexcept{
-            this->x += t;
-            this->y += t;
+        Vector2d &operator+=(const Type &rhs)noexcept{
+            x += rhs;
+            y += rhs;
             return *this;
         }
-        Vector2d<Type> &operator-=(Type t) noexcept{
-            this->x -= t;
-            this->y -= t;
+        Vector2d &operator-=(const Type &rhs)noexcept{
+            x -= rhs;
+            y -= rhs;
             return *this;
         }
-        Vector2d<Type> &operator*=(Type t) noexcept{
-            this->x *= t;
-            this->y *= t;
+        Vector2d &operator*=(const Type &rhs)noexcept{
+            x *= rhs;
+            y *= rhs;
             return *this;
         }
-        Vector2d<Type> &operator/=(Type t) noexcept{
-            this->x /= t;
-            this->y /= t;
+        Vector2d &operator/=(const Type &rhs)noexcept{
+            x /= rhs;
+            y /= rhs;
             return *this;
         }
 
-        bool operator==(const Vector2d<Type> &v)const noexcept{
-            return float_equal(this->x,v.x)&&float_equal(this->y,v.y);
-        }
-        bool operator!=(const Vector2d<Type> &v)const noexcept{
-            return !(*this == v);
-        }
-
-        Type dot(const Vector2d<Type> &vec)const noexcept{
-            return x * vec.x + y * vec.y;
-        }
-
-        friend Type dot(const Vector2d<Type> &vec1,const Vector2d<Type> &vec2)noexcept{
-            return vec1.x * vec2.x + vec1.y * vec2.y;
+        Vector2d operator-()const noexcept{
+            return Vector2d(-x,-y);
         }
 
         Type length()const noexcept{
-            return sqrt(x * x + y * y);
+            return std::sqrt(x * x + y * y);
         }
+
         Type length2()const noexcept{
             return x * x + y * y;
         }
 
-        friend std::ostream &operator<<(std::ostream &out,const Vector2d<Type> &v){
-            return out<<v.x<<' '<<v.y;
+        Vector2d &normalize()noexcept{
+            *this /= length();
+            return *this;
         }
 
+        Type dot(const Vector2d &vec)const noexcept{
+            return x * vec.x + y * vec.y;
+        }
+
+        friend std::ostream &operator<<(std::ostream &os,const Vector2d<Type> &rhs){
+            os<<'['<<rhs.x<<','<<rhs.y<<']';
+            return os;
+        }
     protected:
     private:
     };
 
-    template <class Type>
+    template<class Type>
     class Vector3d{
     public:
-        union {
+        union{
             Type x;
-            Type s;
             Type r;
-        };
-        union {
-            Type y;
-            Type t;
-            Type g;
-        };
-        union {
-            Type z;
             Type u;
+        };
+        union{
+            Type y;
+            Type g;
+            Type v;
+        };
+        union{
+            Type z;
             Type b;
+            Type s;
         };
 
-        explicit Vector3d(Type dx,Type dy,Type dz)
-                :x(dx),y(dy),z(dz){}
-        Vector3d(const Type *ptr)
-                :x(ptr[0]),y(ptr[1]),z(ptr[2]){}
-        Vector3d(const std::initializer_list<Type> &ilist)
-                :x(ilist.begin()[0]),y(ilist.begin()[1]),z(ilist.begin()[2]){}
-        template <class Type2>
-        Vector3d(const Vector3d<Type2> &v)
-                :x(v.x),y(v.y),z(v.z){}
-        Vector3d(const Vector3d<Type> &) = default;
-        Vector3d(Vector3d<Type> &&) = default;
+        Vector3d()
+            :x(0),y(0),z(0){}
+        Vector3d(Type dx,Type dy,Type dz)
+            :x(dx),y(dy),z(dz){}
+        template<class Type2>
+        Vector3d(const Vector3d<Type2> &vec)
+            :x(static_cast<Type>(vec.x)),
+             y(static_cast<Type>(vec.y)),
+             z(static_cast<Type>(vec.z)){}
         ~Vector3d() = default;
 
-        Vector3d<Type> &operator=(const Vector3d<Type> &) = default;
-        Vector3d<Type> &operator=(Vector3d<Type> &&) = default;
+        template<class Type2>
+        Vector3d &operator=(const Vector3d<Type2> &vec){
+            x = static_cast<Type>(vec.x);
+            y = static_cast<Type>(vec.y);
+            z = static_cast<Type>(vec.z);
+            return *this;
+        }
+
+        const Type &operator[](int index)const noexcept{
+            return *(&x + index);
+        }
+        Type &operator[](int index) noexcept{
+            return *(&x + index);
+        }
 
         operator Type*()noexcept{
-            return &x;
+            return reinterpret_cast<Type>(this);
         }
         operator const Type*()const noexcept{
-            return &x;
+            return reinterpret_cast<Type>(this);
         }
 
-        Type &operator[](int index)noexcept{
-            return (&x)[index];
+        Vector3d operator+(const Vector3d &rhs)const noexcept{
+            return Vector3d(x + rhs.x,y + rhs.y,z + rhs.z);
         }
-        const Type &operator[](int index)const noexcept{
-            return (&x)[index];
+        Vector3d operator-(const Vector3d &rhs)const noexcept{
+            return Vector3d(x - rhs.x,y - rhs.y,z - rhs.z);
         }
-
-        Vector3d<Type> operator+(const Vector3d<Type> &vec)const noexcept{
-            return Vector3d<Type>(this->x + vec.x,this->y + vec.y,this->z + vec.z);
+        Vector3d operator*(const Vector3d &rhs)const noexcept{
+            return Vector3d(x * rhs.x,y * rhs.y,z * rhs.z);
         }
-        Vector3d<Type> operator-(const Vector3d<Type> &vec)const noexcept{
-            return Vector3d<Type>(this->x - vec.x,this->y - vec.y,this->z - vec.z);
-        }
-        Vector3d<Type> operator*(const Vector3d<Type> &vec)const noexcept{
-            return Vector3d<Type>(this->x * vec.x,this->y * vec.y,this->z * vec.z);
-        }
-        Vector3d<Type> operator/(const Vector3d<Type> &vec)const noexcept{
-            return Vector3d<Type>(this->x / vec.x,this->y / vec.y,this->z / vec.z);
+        Vector3d operator/(const Vector3d &rhs)const noexcept{
+            return Vector3d(x / rhs.x,y / rhs.y,z / rhs.z);
         }
 
-        Vector3d<Type> operator+(Type t)const noexcept{
-            return Vector3d<Type>(this->x + t,this->y + t,this->z + t);
+        Vector3d operator+(const Type &rhs)const noexcept{
+            return Vector3d(x + rhs,y + rhs,z + rhs);
         }
-        Vector3d<Type> operator-(Type t)const noexcept{
-            return Vector3d<Type>(this->x - t,this->y - t,this->z - t);
+        Vector3d operator-(const Type &rhs)const noexcept{
+            return Vector3d(x - rhs,y - rhs,z - rhs);
         }
-        Vector3d<Type> operator*(Type t)const noexcept{
-            return Vector3d<Type>(this->x * t,this->y * t,this->z * t);
+        Vector3d operator*(const Type &rhs)const noexcept{
+            return Vector3d(x * rhs,y * rhs,z * rhs);
         }
-        Vector3d<Type> operator/(Type t)const noexcept{
-            return Vector3d<Type>(this->x / t,this->y / t,this->z / t);
-        }
-        Vector3d<Type> operator-()const noexcept{
-            return Vector3d<Type>(-x,-y,-z);
+        Vector3d operator/(const Type &rhs)const noexcept{
+            return Vector3d(x / rhs,y / rhs,z / rhs);
         }
 
-        Vector3d<Type> &operator+=(const Vector3d<Type> &vec) noexcept{
-            this->x += vec.x;
-            this->y += vec.y;
-            this->z += vec.z;
+
+        Vector3d &operator+=(const Vector3d &rhs)noexcept{
+            x += rhs.x;
+            y += rhs.y;
+            z += rhs.z;
             return *this;
         }
-        Vector3d<Type> &operator-=(const Vector3d<Type> &vec) noexcept{
-            this->x -= vec.x;
-            this->y -= vec.y;
-            this->z -= vec.z;
+        Vector3d &operator-=(const Vector3d &rhs)noexcept{
+            x -= rhs.x;
+            y -= rhs.y;
+            z -= rhs.z;
             return *this;
         }
-        Vector3d<Type> &operator*=(const Vector3d<Type> &vec) noexcept{
-            this->x *= vec.x;
-            this->y *= vec.y;
-            this->z *= vec.z;
+        Vector3d &operator*=(const Vector3d &rhs)noexcept{
+            x *= rhs.x;
+            y *= rhs.y;
+            z *= rhs.z;
             return *this;
         }
-        Vector3d<Type> &operator/=(const Vector3d<Type> &vec) noexcept{
-            this->x /= vec.x;
-            this->y /= vec.y;
-            this->z /= vec.z;
+        Vector3d &operator/=(const Vector3d &rhs)noexcept{
+            x /= rhs.x;
+            y /= rhs.y;
+            z /= rhs.z;
             return *this;
         }
 
-        Vector3d<Type> &operator+=(Type t) noexcept{
-            this->x += t;
-            this->y += t;
-            this->z += t;
+        Vector3d &operator+=(const Type &rhs)noexcept{
+            x += rhs;
+            y += rhs;
+            z += rhs;
             return *this;
         }
-        Vector3d<Type> &operator-=(Type t) noexcept{
-            this->x -= t;
-            this->y -= t;
-            this->z -= t;
+        Vector3d &operator-=(const Type &rhs)noexcept{
+            x -= rhs;
+            y -= rhs;
+            z -= rhs;
             return *this;
         }
-        Vector3d<Type> &operator*=(Type t) noexcept{
-            this->x *= t;
-            this->y *= t;
-            this->z *= t;
+        Vector3d &operator*=(const Type &rhs)noexcept{
+            x *= rhs;
+            y *= rhs;
+            z *= rhs;
             return *this;
         }
-        Vector3d<Type> &operator/=(Type t) noexcept{
-            this->x /= t;
-            this->y /= t;
-            this->z /= t;
+        Vector3d &operator/=(const Type &rhs)noexcept{
+            x /= rhs;
+            y /= rhs;
+            z /= rhs;
             return *this;
         }
 
-        bool operator==(const Vector3d<Type> &v)const noexcept{
-            return float_equal(this->x,v.x)&&float_equal(this->y,v.y)&&float_equal(this->z,v.z);
-        }
-        bool operator!=(const Vector3d<Type> &v)const noexcept{
-            return !(*this == v);
+        Vector3d operator-()const noexcept{
+            return Vector3d(-x,-y,-z);
         }
 
-        Type dot(const Vector3d<Type> &vec)const noexcept{
+        Type length()const noexcept{
+            return std::sqrt(x * x + y * y + z * z);
+        }
+
+        Type length2()const noexcept{
+            return x * x + y * y + z * z;
+        }
+
+        Vector3d &normalize()noexcept{
+            *this /= length();
+            return *this;
+        }
+
+        Type dot(const Vector3d &vec)const noexcept{
             return x * vec.x + y * vec.y + z * vec.z;
         }
-        friend Type dot(const Vector3d<Type> &vec1,const Vector3d<Type> &vec2)noexcept{
-            return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
+        Vector3d cross(const Vector3d &vec)const noexcept{
+            return Vector3d(y * vec.z - vec.y * z, z * vec.x - vec.z * x, x * vec.y - vec.x * y);
         }
 
-        Vector3d<Type> cross(const Vector3d<Type> &vec)const noexcept{
-            return Vector3d<Type>(this->y * vec.z - this->z * vec.y,
-                                   this->z * vec.x - this->x * vec.z,
-                                   this->x * vec.y - this->y * vec.x);
+        friend std::ostream &operator<<(std::ostream &os,const Vector3d<Type> &rhs){
+            os<<'['<<rhs.x<<','<<rhs.y<<','<<rhs.z<<']';
+            return os;
         }
-        friend Vector3d<Type> cross(const Vector3d<Type> &vec1,const Vector3d<Type> &vec2)noexcept{
-            return Vector3d<Type>(vec1.y * vec2.z - vec1.z * vec2.y,
-                                  vec1.z * vec2.x - vec1.x * vec2.z,
-                                  vec1.x * vec2.y - vec1.y * vec2.x);
-        }
-
-        Type length()const noexcept{
-            return sqrt(x * x + y * y + z * z);
-        }
-        Type length2()const noexcept{
-            return x * x + y * y+ z * z;
-        }
-
-        friend std::ostream &operator<<(std::ostream &out,const Vector3d<Type> &v){
-            return out<<v.x<<' '<<v.y<<' '<<v.z;
-        }
-
     protected:
     private:
     };
 
-    template <class Type>
+    template<class Type>
     class Vector4d{
     public:
-        union {
+        union{
             Type x;
-            Type s;
             Type r;
-        };
-        union {
-            Type y;
-            Type t;
-            Type g;
-        };
-        union {
-            Type z;
             Type u;
-            Type b;
         };
-        union {
-            Type w;
+        union{
+            Type y;
+            Type g;
             Type v;
+        };
+        union{
+            Type z;
+            Type b;
+            Type s;
+        };
+        union{
+            Type w;
             Type a;
+            Type t;
         };
 
-        explicit Vector4d(Type dx,Type dy,Type dz,Type dw)
+        Vector4d()
+                :x(0),y(0),z(0),w(0){}
+        Vector4d(Type dx,Type dy,Type dz,Type dw)
                 :x(dx),y(dy),z(dz),w(dw){}
-        Vector4d(const Type *ptr)
-                :x(ptr[0]),y(ptr[1]),z(ptr[2]),w(ptr[3]){}
-        Vector4d(const std::initializer_list<Type> &ilist)
-                :x(ilist.begin()[0]),y(ilist.begin()[1]),z(ilist.begin()[2]),w(ilist.begin()[3]){}
-        template <class Type2>
+        template<class Type2>
         Vector4d(const Vector4d<Type2> &vec)
-                :x(vec.x),y(vec.y),z(vec.z),w(vec.w){}
-        Vector4d(const Vector4d<Type> &) = default;
-        Vector4d(Vector4d<Type> &&) = default;
+                :x(static_cast<Type>(vec.x)),
+                 y(static_cast<Type>(vec.y)),
+                 z(static_cast<Type>(vec.z)),
+                 w(static_cast<Type>(vec.w)){}
+        template <class Type2>
+        Vector4d(const Vector3d<Type2> &vec3,Type2 dw)
+            :x(static_cast<Type>(vec3.x)),
+             y(static_cast<Type>(vec3.y)),
+             z(static_cast<Type>(vec3.z)),
+             w(static_cast<Type>(dw)){}
         ~Vector4d() = default;
 
-        Vector4d<Type> &operator=(const Vector4d<Type> &) = default;
-        Vector4d<Type> &operator=(Vector4d<Type> &&) = default;
+        template<class Type2>
+        Vector4d &operator=(const Vector4d<Type2> &vec){
+            x = static_cast<Type>(vec.x);
+            y = static_cast<Type>(vec.y);
+            z = static_cast<Type>(vec.z);
+            w = static_cast<Type>(vec.w);
+            return *this;
+        }
+
+        const Type &operator[](int index)const noexcept{
+            return *(&x + index);
+        }
+        Type &operator[](int index) noexcept{
+            return *(&x + index);
+        }
 
         operator Type*()noexcept{
-            return &x;
+            return reinterpret_cast<Type>(this);
         }
         operator const Type*()const noexcept{
-            return &x;
+            return reinterpret_cast<Type>(this);
         }
 
-        Type &operator[](int index)noexcept{
-            return (&x)[index];
+        Vector4d operator+(const Vector4d &rhs)const noexcept{
+            return Vector4d(x + rhs.x,y + rhs.y,z + rhs.z,w + rhs.w);
         }
-        const Type &operator[](int index)const noexcept{
-            return (&x)[index];
+        Vector4d operator-(const Vector4d &rhs)const noexcept{
+            return Vector4d(x - rhs.x,y - rhs.y,z - rhs.z,w - rhs.w);
         }
-
-        Vector4d<Type> operator+(const Vector4d<Type> &vec)const noexcept{
-            return Vector4d<Type>(this->x + vec.x,this->y + vec.y,this->z + vec.z,this->w + vec.w);
+        Vector4d operator*(const Vector4d &rhs)const noexcept{
+            return Vector4d(x * rhs.x,y * rhs.y,z * rhs.z,w * rhs.w);
         }
-        Vector4d<Type> operator-(const Vector4d<Type> &vec)const noexcept{
-            return Vector4d<Type>(this->x - vec.x,this->y - vec.y,this->z - vec.z,this->w - vec.w);
-        }
-        Vector4d<Type> operator*(const Vector4d<Type> &vec)const noexcept{
-            return Vector4d<Type>(this->x * vec.x,this->y * vec.y,this->z * vec.z,this->w * vec.w);
-        }
-        Vector4d<Type> operator/(const Vector4d<Type> &vec)const noexcept{
-            return Vector4d<Type>(this->x / vec.x,this->y / vec.y,this->z / vec.z,this->w / vec.w);
+        Vector4d operator/(const Vector4d &rhs)const noexcept{
+            return Vector4d(x / rhs.x,y / rhs.y,z / rhs.z,w / rhs.w);
         }
 
-        Vector4d<Type> operator+(Type t)const noexcept{
-            return Vector4d<Type>(this->x + t,this->y + t,this->z + t,this->w + t);
+        Vector4d operator+(const Type &rhs)const noexcept{
+            return Vector4d(x + rhs,y + rhs,z + rhs,w + rhs);
         }
-        Vector4d<Type> operator-(Type t)const noexcept{
-            return Vector4d<Type>(this->x - t,this->y - t,this->z - t,this->w - t);
+        Vector4d operator-(const Type &rhs)const noexcept{
+            return Vector4d(x - rhs,y - rhs,z - rhs,w - rhs);
         }
-        Vector4d<Type> operator*(Type t)const noexcept{
-            return Vector4d<Type>(this->x * t,this->y * t,this->z * t,this->w * t);
+        Vector4d operator*(const Type &rhs)const noexcept{
+            return Vector4d(x * rhs,y * rhs,z * rhs,w * rhs);
         }
-        Vector4d<Type> operator/(Type t)const noexcept{
-            return Vector4d<Type>(this->x / t,this->y / t,this->z / t,this->w / t);
-        }
-        Vector4d<Type> operator-()const noexcept{
-            return Vector4d<Type>(-x,-y,-z,-w);
+        Vector4d operator/(const Type &rhs)const noexcept{
+            return Vector4d(x / rhs,y / rhs,z / rhs,w / rhs);
         }
 
-        Vector4d<Type> &operator+=(const Vector4d<Type> &vec) noexcept{
-            this->x += vec.x;
-            this->y += vec.y;
-            this->z += vec.z;
-            this->w += vec.w;
+
+        Vector4d &operator+=(const Vector4d &rhs)noexcept{
+            x += rhs.x;
+            y += rhs.y;
+            z += rhs.z;
+            w += rhs.w;
             return *this;
         }
-        Vector4d<Type> &operator-=(const Vector4d<Type> &vec) noexcept{
-            this->x -= vec.x;
-            this->y -= vec.y;
-            this->z -= vec.z;
-            this->w -= vec.w;
+        Vector4d &operator-=(const Vector4d &rhs)noexcept{
+            x -= rhs.x;
+            y -= rhs.y;
+            z -= rhs.z;
+            w -= rhs.w;
             return *this;
         }
-        Vector4d<Type> &operator*=(const Vector4d<Type> &vec) noexcept{
-            this->x *= vec.x;
-            this->y *= vec.y;
-            this->z *= vec.z;
-            this->w *= vec.w;
+        Vector4d &operator*=(const Vector4d &rhs)noexcept{
+            x *= rhs.x;
+            y *= rhs.y;
+            z *= rhs.z;
+            w *= rhs.w;
             return *this;
         }
-        Vector4d<Type> &operator/=(const Vector4d<Type> &vec) noexcept{
-            this->x /= vec.x;
-            this->y /= vec.y;
-            this->z /= vec.z;
-            this->w /= vec.w;
+        Vector4d &operator/=(const Vector4d &rhs)noexcept{
+            x /= rhs.x;
+            y /= rhs.y;
+            z /= rhs.z;
+            w /= rhs.w;
             return *this;
         }
 
-        Vector4d<Type> &operator+=(Type t) noexcept{
-            this->x += t;
-            this->y += t;
-            this->z += t;
-            this->w += t;
+        Vector4d &operator+=(const Type &rhs)noexcept{
+            x += rhs;
+            y += rhs;
+            z += rhs;
+            w += rhs;
             return *this;
         }
-        Vector4d<Type> &operator-=(Type t) noexcept{
-            this->x -= t;
-            this->y -= t;
-            this->z -= t;
-            this->w -= t;
+        Vector4d &operator-=(const Type &rhs)noexcept{
+            x -= rhs;
+            y -= rhs;
+            z -= rhs;
+            w -= rhs;
             return *this;
         }
-        Vector4d<Type> &operator*=(Type t) noexcept{
-            this->x *= t;
-            this->y *= t;
-            this->z *= t;
-            this->w *= t;
+        Vector4d &operator*=(const Type &rhs)noexcept{
+            x *= rhs;
+            y *= rhs;
+            z *= rhs;
+            w *= rhs;
             return *this;
         }
-        Vector4d<Type> &operator/=(Type t) noexcept{
-            this->x /= t;
-            this->y /= t;
-            this->z /= t;
-            this->w /= t;
+        Vector4d &operator/=(const Type &rhs)noexcept{
+            x /= rhs;
+            y /= rhs;
+            z /= rhs;
+            w /= rhs;
             return *this;
         }
 
-        bool operator==(const Vector4d<Type> &vec)const noexcept{
-            return float_equal(this->x,vec.x)&&float_equal(this->y,vec.y)&&float_equal(this->z,vec.z)&&float_equal(this->w,vec.w);
-        }
-        bool operator!=(const Vector4d<Type> &vec)const noexcept{
-            return !(*this == vec);
-        }
-
-        Type dot(const Vector4d<Type> &vec)const noexcept{
-            return x * vec.x + y * vec.y + z * vec.z + w * vec.w;
-        }
-        friend Type dot(const Vector4d<Type> &vec1,const Vector4d<Type> &vec2)noexcept{
-            return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z + vec1.w * vec2.w;
+        Vector4d operator-()const noexcept{
+            return Vector4d(-x,-y,-z,-w);
         }
 
         Type length()const noexcept{
-            return sqrt(x * x + y * y + z * z + w * w);
+            return std::sqrt(x * x + y * y + z * z + w * w);
         }
+
         Type length2()const noexcept{
-            return x * x + y * y+ z * z + w * w;
+            return x * x + y * y + z * z + w * w;
         }
 
-        friend std::ostream &operator<<(std::ostream &out,const Vector4d<Type> &v){
-            return out<<v.x<<' '<<v.y<<' '<<v.z<<' '<<v.w;
+        Vector4d &normalize()noexcept{
+            *this /= length();
+            return *this;
         }
 
+        friend std::ostream &operator<<(std::ostream &os,const Vector4d<Type> &rhs){
+            os<<'['<<rhs.x<<','<<rhs.y<<','<<rhs.z<<','<<rhs.w<<']';
+            return os;
+        }
     protected:
     private:
     };
-
-
-    using Vector2df = Vector2d<float>;
-    using Vector2dd = Vector2d<double>;
-    using Vector2di = Vector2d<int>;
-	using Vector2dui = Vector2d<unsigned int>;
-
-    using Vector3df = Vector3d<float>;
-    using Vector3dd = Vector3d<double>;
-    using Vector3di = Vector3d<int>;
-	using Vector3dui = Vector3d<unsigned int>;
-
-    using Vector4df = Vector4d<float>;
-    using Vector4dd = Vector4d<double>;
-    using Vector4di = Vector4d<int>;
-	using Vector4dui = Vector4d<unsigned int>;
 }
-
-#undef XMATH_MIN
 
 #endif //_XMATH_VECTOR_H_

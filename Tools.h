@@ -1,123 +1,127 @@
 #ifndef _XMATH_TOOLS_H_
 #define _XMATH_TOOLS_H_
 
-#include <cmath>
 #include "Matrix.h"
-
-#include <iostream>
-using namespace std;
 
 namespace xmath{
     template <class Type>
     Matrix4d<Type> translate(Type x,Type y,Type z){
-        return Matrix4d<Type>{
-            1.0, 0.0, 0.0,   x,
-            0.0, 1.0, 0.0,   y,
-            0.0, 0.0, 1.0,   z,
-            0.0, 0.0, 0.0, 1.0
-        };
+        Matrix4d<Type> mat;
+        mat(3, 0) = x;
+        mat(3, 1) = y;
+        mat(3, 2) = z;
+        mat(3, 3) = 1.0;
+        return mat;
     }
-
+    
     template <class Type>
     Matrix4d<Type> scale(Type x,Type y,Type z){
-        return Matrix4d<Type>{
-            x,   0.0, 0.0, 0.0,
-            0.0,   y, 0.0, 0.0,
-            0.0, 0.0,   z, 0.0,
-            0.0, 0.0, 0.0, 1.0
-        };
+        Matrix4d<Type> mat;
+        mat(0,0) = x;
+        mat(1,1) = y;
+        mat(2,2) = z;
+        return mat;
     }
-
     template <class Type>
-    Matrix4d<Type> rotate(Type x,Type y,Type z){
-        return Matrix4d<Type>{
-            1.0,         0.0,        0.0,0.0,
-            0.0, std::cos(x),std::sin(x),0.0,
-            0.0,-std::sin(x),std::cos(x),0.0,
-            0.0,         0.0,        0.0,1.0
-        } * Matrix4d<Type>{
-            std::cos(y),0.0,-std::sin(y),0.0,
-                    0.0,1.0,         0.0,0.0,
-            std::sin(y),0.0, std::cos(y),0.0,
-                    0.0,0.0,         0.0,1.0
-        } * Matrix4d<Type>{
-            std::cos(z),std::sin(z),0.0,0.0,
-           -std::sin(z),std::cos(z),0.0,0.0,
-                    0.0,        0.0,1.0,0.0,
-                    0.0,        0.0,0.0,1.0
-        };
-    }
+    Matrix4d<Type> rotate(Type xrad,Type yrad,Type zrad){
+        Matrix4d<Type> ma, mb, mc;
+        Type ac = cos(xrad);
+        Type as = sin(xrad);
+        Type bc = cos(yrad);
+        Type bs = sin(yrad);
+        Type cc = cos(zrad);
+        Type cs = sin(zrad);
 
+        ma(1, 1) = ac;
+        ma(2, 1) = as;
+        ma(1, 2) = -as;
+        ma(2, 2) = ac;
+
+        mb(0, 0) = bc;
+        mb(2, 0) = -bs;
+        mb(0, 2) = bs;
+        mb(2, 2) = bc;
+
+        mc(0, 0) = cc;
+        mc(1, 0) = cs;
+        mc(0, 1) = -cs;
+        mc(1, 1) = cc;
+        
+        Matrix4d<Type> ret = ma * mb * mc;
+
+        return ret;
+    }
     template <class Type>
     Matrix4d<Type> lookAt(const Vector3d<Type> &eye,const Vector3d<Type> &target,const Vector3d<Type> &up){
-        auto forward = target - eye;
-        forward /= forward.length();//normalize
+        Vector3d<Type> forward, side, up2;
+        Matrix4d<Type> mat;
 
-        auto side = forward.cross(up);
-        side /= side.length();//normalize
+        forward = target - eye;
+        up2 = up;
 
-        auto up2 = side.cross(forward);
+        forward.normalize();
         
-        Matrix4d<Type> view{
-                side.x,    side.y,    side.z,0.0,
-                 up2.x,     up2.y,     up2.z,0.0,
-            -forward.x,-forward.y,-forward.z,0.0,
-                   0.0,       0.0,       0.0,1.0
-        };
+        side = forward.cross(up);
+        side.normalize();
+        
+        up2 = side.cross(forward);
 
-        return view * translate<Type>(-eye.x,-eye.y,-eye.z);
+        mat(0, 0) = side.x;
+        mat(1, 0) = side.y;
+        mat(2, 0) = side.z;
+
+        mat(0, 1) = up2.x;
+        mat(1, 1) = up2.y;
+        mat(2, 1) = up2.z;
+
+        mat(0, 2) = -forward.x;
+        mat(1, 2) = -forward.y;
+        mat(2, 2) = -forward.z;
+
+        mat = mat * translate(-eye.x, -eye.y, -eye.z);
+        return mat;
     }
-
     template <class Type>
-    Matrix4d<Type> frustum(Type top,Type buttom,Type left,Type right,Type znear,Type zfar){
-        return Matrix4d<Type>{
-            static_cast<Type>(2.0)*znear/(right-left),                                      0.0,(right+left)/(right-left),                                           0.0,
-                                                  0.0,static_cast<Type>(2.0)*znear/(top-buttom),(top+buttom)/(top-buttom),                                           0.0,
-                                                  0.0,                                      0.0,(zfar+znear)/(znear-zfar),static_cast<Type>(2.0)*zfar*znear/(znear-zfar),
-                                                  0.0,                                      0.0,                     -1.0,                                           0.0
-        };
-    }
+    Matrix4d<Type> frustum(Type left,Type right,Type bottom,Type top,Type znear,Type zfar){
+        Matrix4d<Type> mat;
 
+        const Type invWidth = 1.0 / (right - left);
+        const Type invHeight = 1.0 / (top - bottom);
+        const Type invDepth = 1.0 / (zfar - znear);
+
+        const Type twoZNear = 2 * znear;
+
+        mat(0,0) = twoZNear * invWidth;
+        mat(1,1) = twoZNear * invHeight;
+
+        mat(2,0) = (right + left) * invWidth;
+        mat(2,1) = (top + bottom) * invHeight;
+        mat(2,2) = - (zfar + znear) * invDepth;
+        mat(2,3) = -1;
+
+        mat(3,2) = - twoZNear * zfar * invDepth;
+        mat(3,3) = 0;
+
+        return mat;
+    }
     template <class Type>
-    Matrix4d<Type> frustum(Type width,Type height,Type znear,Type zfar){
-        return Matrix4d<Type>{
-            static_cast<Type>(2.0)*znear/width,                                0.0,                      0.0,                                           0.0,
-                                           0.0,static_cast<Type>(2.0)*znear/height,                      0.0,                                           0.0,
-                                           0.0,                                0.0,(znear+zfar)/(znear-zfar),static_cast<Type>(2.0)*znear*zfar/(znear-zfar),
-                                           0.0,                                0.0,                     -1.0,                                           0.0
-        };
-    }
+    Matrix4d<Type> ortho(Type left,Type right,Type bottom,Type top,Type znear,Type zfar){
+        const Type invWidth = 1.0 / (right  - left);
+        const Type invHeight = 1.0 / (top - bottom);
+        const Type invDepth = 1.0 / (zfar - znear);
 
-    template <class Type>
-    Matrix4d<Type> frustum_fov(Type fov,Type aspect,Type znear,Type zfar){
-        return Matrix4d<Type>{
-            static_cast<Type>(1.0)/(std::tan(fov/static_cast<Type>(2.0))*aspect),0.0,0.0,0.0,
-            0.0,static_cast<Type>(1.0)/std::tan(fov/ static_cast<Type>(2.0)),0.0,0.0,
-            0.0,0.0,(zfar+znear)/(znear-zfar),(static_cast<Type>(2.0)*zfar*znear)/(znear-zfar),
-            0.0,0.0,-1.0,0.0
-        };
-    }
+        Matrix4d<Type> mat;
 
-    template <class Type>
-    Matrix4d<Type> ortho(Type top,Type buttom,Type left,Type right,Type znear,Type zfar){
-        return Matrix4d<Type>{
-                static_cast<Type>(2.0)/(right-left),              0.0,              0.0,(left+right)/(left-right),
-                          0.0,static_cast<Type>(2.0)/(top-buttom),              0.0,(buttom+top)/(buttom-top),
-                          0.0,              0.0, static_cast<Type>(2.0)/(znear-zfar),(znear+zfar)/(znear-zfar),
-                          0.0,              0.0,              0.0,                      1.0
-        };
-    }
+        mat(0,0) = 2 * invWidth;
+        mat(1,1) = 2 * invHeight;
+        mat(2,2) = -2 * invDepth;
 
-    template <class Type>
-    Matrix4d<Type> ortho(Type width,Type height,Type znear,Type zfar){
-        return Matrix4d<Type>{
-                static_cast<Type>(2.0)/width,        0.0,              0.0,                      0.0,
-                       0.0,static_cast<Type>(2.0)/height,              0.0,                      0.0,
-                       0.0,        0.0, static_cast<Type>(2.0)/(znear-zfar),(znear+zfar)/(znear-zfar),
-                       0.0,        0.0,              0.0,                     1.0
-        };
-    }
+        mat(3,0) = -(right + left) * invWidth;
+        mat(3,1) = -(top + bottom) * invHeight;
+        mat(3,2) = -(zfar + znear) * invDepth;
 
+        return mat;
+    }
 }
 
-#endif
+#endif //_XMATH_TOOLS_H_
