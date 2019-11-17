@@ -22,8 +22,8 @@ namespace xmath{
             }
         }
         /** @name Copy Constructor
-         *  @param mat the source of copy
-         *  @brief copy from another matrix whose size equal this one
+         *  @param mat The source of copy
+         *  @brief Copy from another matrix whose size equal this one
          */
         template <class Type2,size_t N2,size_t M2>
         Matrix(const Matrix<Type2,N2,M2> &mat){
@@ -36,6 +36,12 @@ namespace xmath{
         }
         ~Matrix() = default;
 
+        /**@name operator<<
+         * @brief Print the matrix to ostream
+         * @param os The ostream object
+         * @param mat The Matrix
+         * @return return the reference of os
+         */
         friend std::ostream &operator<<(std::ostream &os,const Matrix &mat){
             for(int i = 0;i < M;++i){
                 os << '[';
