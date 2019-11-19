@@ -39,8 +39,50 @@
 //
 //RUN(test1)
 
-CASE_BEGIN(test2)
+//CASE_BEGIN(test2)
+//    using namespace xmath;
+//    auto m1 = Matrix<float,2,3>{
+//        1,2,3,
+//        4,5,6
+//    };
+//    m1 *= Matrix<float,2,3>{
+//        2,3,4,
+//        1,3,1
+//    };
+//    INFO("m1:\n",m1);
+//    INFO("transpose(m1):\n",/*m1.transpose()*/~m1);
+//    INFO("sub matrix:\n",m1.sub<2,2>(0,0));
+//
+//    INFO("is_vector<1,4>:",xmath::is_vector_v<1,4>);
+//    INFO("is_vector<6,1>:",xmath::is_vector_v<6,1>);
+//    INFO("is_vector<2,3>:",xmath::is_vector_v<2,3>);
+//    INFO("is_scalar<1,1>:",xmath::is_scalar_v<1,1>);
+//    INFO("is_square<3,3>:",xmath::is_square_matrix_v<3,3>);
+//CASE_END
+//
+//RUN(test2)
 
+CASE_BEGIN(test3)
+    using namespace xmath;
+    auto m1 = Matrix<float,1,3>({
+        1,3,5
+    });
+    auto m2 = Matrix<float,3,1>({
+        3,
+        2,
+        1
+    });
+    INFO("[1,3,5] `dot` [3;2;1] = ",m2.dot(m1));
+    INFO("[1,3,5] `cross` [3;2;1] = ",m1.cross(m2));
+    auto m3 = Matrix<float,2,3>({
+        1,2,3,
+        3,4,5
+    });
+
+    //m3.dot(m2);
+    //m2.dot(m3);
 CASE_END
 
-RUN(test2)
+
+
+RUN(test3)
