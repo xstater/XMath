@@ -132,7 +132,7 @@ namespace xmath{
         Matrix &operator=(const Matrix &mat) = default;
         Matrix &operator=(Matrix &&) noexcept = default;
 
-        /**@name opeartor()(x,y)
+        /**@name operator()(x,y)
          * @brief Get the (x,y) of the matrix
          * @param x the x coordinate
          * @param y the y coordinate
@@ -232,11 +232,27 @@ namespace xmath{
         }
 
 
+        /**@name product
+         * @brief compute the product of two matrices
+         * @tparam Col2 the other matrix's Col
+         * @param mat The other mat
+         * @return the answer matrix
+         */
         template <size_t Col2>
         Matrix<Type,Row,Col2> product(const Matrix<Type,Col,Col2> &mat)const noexcept{
             Matrix<Type,Row,Col2> res;
-
+            for(size_t i = 0;i < Row;++i){
+                for(size_t j = 0;j < Col2;++j){
+                    for(size_t k = 0;k < Col;++k){
+                        res(i,j) += (*this)(i,k) * mat(k,j);
+                    }
+                }
+            }
             return res;
+        }
+        template <size_t Col2>
+        Matrix<Type,Row,Col2> operator&(const Matrix<Type,Col,Col2> &mat)const noexcept{
+            return product(mat);
         }
 
         /**@name dot

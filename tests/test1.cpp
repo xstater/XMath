@@ -76,8 +76,15 @@ CASE_BEGIN(test3)
     INFO("[1,3,5] `cross` [3;2;1] = ",m1.cross(m2));
     auto m3 = Matrix<float,2,3>({
         1,2,3,
-        3,4,5
+        4,5,6
     });
+    auto m4 = Matrix<float,3,4>({
+        1,2,3,4,
+        5,6,7,8,
+        2,3,4,5
+    });
+//    INFO("m3 product m4:\n",m3.product(m4));
+    INFO("m3 product m4:\n",m3 & m4);
 
     //m3.dot(m2);
     //m2.dot(m3);
