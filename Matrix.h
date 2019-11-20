@@ -542,6 +542,89 @@ namespace xmath{
     class Matrix<Type,Dynamic,Dynamic>{
         //todo
     };
+
+    template <class Type>
+    using Scalar = Matrix<Type,1,1>;
+    template <class Type,size_t Size>
+    using RowVector = Matrix<Type,1,Size>;
+    template <class Type,size_t Size>
+    using ColVector = Matrix<Type,Size,1>;
+    template <class Type,size_t Size>
+    using Vector = ColVector<Type,Size>;
+    template <class Type,size_t Size>
+    using SquareMatrix = Matrix<Type,Size,Size>;
+
+    using Vector2f = Vector<float,2>;
+    using Vector3f = Vector<float,3>;
+    using Vector4f = Vector<float,4>;
+
+    using Vector2d = Vector<double,2>;
+    using Vector3d = Vector<double,3>;
+    using Vector4d = Vector<double,4>;
+
+    using Vector2i = Vector<int,2>;
+    using Vector3i = Vector<int,3>;
+    using Vector4i = Vector<int,4>;
+
+    using Vector2ui = Vector<unsigned int,2>;
+    using Vector3ui = Vector<unsigned int,3>;
+    using Vector4ui = Vector<unsigned int,4>;
+
+    using Matrix2x2f = Matrix<float,2,2>;
+    using Matrix2x3f = Matrix<float,2,3>;
+    using Matrix2x4f = Matrix<float,2,4>;
+    using Matrix3x2f = Matrix<float,3,2>;
+    using Matrix3x3f = Matrix<float,3,3>;
+    using Matrix3x4f = Matrix<float,3,4>;
+    using Matrix4x2f = Matrix<float,4,2>;
+    using Matrix4x3f = Matrix<float,4,3>;
+    using Matrix4x4f = Matrix<float,4,4>;
+
+    using Matrix2x2d = Matrix<double,2,2>;
+    using Matrix2x3d = Matrix<double,2,3>;
+    using Matrix2x4d = Matrix<double,2,4>;
+    using Matrix3x2d = Matrix<double,3,2>;
+    using Matrix3x3d = Matrix<double,3,3>;
+    using Matrix3x4d = Matrix<double,3,4>;
+    using Matrix4x2d = Matrix<double,4,2>;
+    using Matrix4x3d = Matrix<double,4,3>;
+    using Matrix4x4d = Matrix<double,4,4>;
+
+    using Matrix2x2i = Matrix<int,2,2>;
+    using Matrix2x3i = Matrix<int,2,3>;
+    using Matrix2x4i = Matrix<int,2,4>;
+    using Matrix3x2i = Matrix<int,3,2>;
+    using Matrix3x3i = Matrix<int,3,3>;
+    using Matrix3x4i = Matrix<int,3,4>;
+    using Matrix4x2i = Matrix<int,4,2>;
+    using Matrix4x3i = Matrix<int,4,3>;
+    using Matrix4x4i = Matrix<int,4,4>;
+
+    using Matrix2x2ui = Matrix<unsigned int,2,2>;
+    using Matrix2x3ui = Matrix<unsigned int,2,3>;
+    using Matrix2x4ui = Matrix<unsigned int,2,4>;
+    using Matrix3x2ui = Matrix<unsigned int,3,2>;
+    using Matrix3x3ui = Matrix<unsigned int,3,3>;
+    using Matrix3x4ui = Matrix<unsigned int,3,4>;
+    using Matrix4x2ui = Matrix<unsigned int,4,2>;
+    using Matrix4x3ui = Matrix<unsigned int,4,3>;
+    using Matrix4x4ui = Matrix<unsigned int,4,4>;
+
+    using Matrix2f = Matrix2x2f;
+    using Matrix3f = Matrix3x3f;
+    using Matrix4f = Matrix4x4f;
+
+    using Matrix2d = Matrix2x2d;
+    using Matrix3d = Matrix3x3d;
+    using Matrix4d = Matrix4x4d;
+
+    using Matrix2i = Matrix2x2i;
+    using Matrix3i = Matrix3x3i;
+    using Matrix4i = Matrix4x4i;
+
+    using Matrix2ui = Matrix2x2ui;
+    using Matrix3ui = Matrix3x3ui;
+    using Matrix4ui = Matrix4x4ui;
 }
 
 #endif //_XMATH_MATRIX_H_
