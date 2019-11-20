@@ -179,6 +179,17 @@ namespace xmath{
             }
             return ans;
         }
+        /**@name operator+
+         * @brief add matrix and value
+         * @param val the value
+         * @return the answer matrix
+         */
+        Matrix operator+(const Type &val)const noexcept {
+            Matrix ans;
+            for(size_t i = 0;i < Count;++i){
+                ans.m_data[i] = m_data[i] + val;
+            }
+        }
 
         /**@name operator-
          * @brief Minus two matrices
@@ -189,6 +200,18 @@ namespace xmath{
             Matrix ans;
             for(auto i = 0;i < Count;++i){
                 ans.m_data[i] = m_data[i] - mat.m_data[i];
+            }
+            return ans;
+        }
+        /**@name operator-
+         * @brief Minus matrix and value
+         * @param value the value
+         * @return The answer matrix
+         */
+        Matrix operator-(const Type &value)const noexcept{
+            Matrix ans;
+            for(auto i = 0;i < Count;++i){
+                ans.m_data[i] = m_data[i] - value;
             }
             return ans;
         }
@@ -204,8 +227,20 @@ namespace xmath{
             }
             return ans;
         }
+        /**@name operator*
+          * @brief Multiple matrix and value
+          * @param value the value
+          * @return The answer matrix
+          */
+        Matrix operator*(const Type &value)const noexcept{
+            Matrix ans;
+            for(auto i = 0;i < Count;++i){
+                ans.m_data[i] = m_data[i] * value;
+            }
+            return ans;
+        }
         /**@name operator/
-          * @brief Multiple two matrices
+          * @brief Divide two matrices
           * @param mat The other matrix
           * @return The answer matrix
           */
@@ -216,6 +251,19 @@ namespace xmath{
             }
             return ans;
         }
+        /**@name operator/
+          * @brief Divide matrix and value
+          * @param value the value
+          * @return The answer matrix
+          */
+        Matrix operator/(const Type &value)const noexcept{
+            Matrix ans;
+            for(auto i = 0;i < Count;++i){
+                ans.m_data[i] = m_data[i] / value;
+            }
+            return ans;
+        }
+
 
         ///I'm lazy
         Matrix &operator+=(const Matrix &mat)noexcept{
@@ -230,26 +278,40 @@ namespace xmath{
         Matrix &operator/=(const Matrix &mat)noexcept{
             return (*this = *this / mat);
         }
-
-        /**@name det
-         * @brief compute the determinant
-         * @warning only valid for square matrix
-         * @return the determinant
-         */
-        auto det()const noexcept
-            -> std::enable_if_t<is_square_matrix_v<Row,Col>,Type>{
-#ifdef __cpp_if_constexpr
-#define __CONSTEXPR constexpr
-#else
-#define __CONSTEXPR
-#endif
-            if __CONSTEXPR(Row == 1){
-                return m_data[0];
-            }else if __CONSTEXPR(Row == 2){
-                return m_data[0] * m_data[3] - m_data[2] * m_data[1];
-            }
-#undef __CONSTEXPR
+        Matrix &operator+=(const Type &value)noexcept{
+            return (*this = *this + value);
         }
+        Matrix &operator-=(const Type &value)noexcept {
+            return (*this = *this - value);
+        }
+        Matrix &operator*=(const Type &value)noexcept{
+            return (*this = *this * value);
+        }
+        Matrix &operator/=(const Type &value)noexcept{
+            return (*this = *this / value);
+        }
+
+
+        /**@name operator==
+         * @brief check if two matrices are equal
+         * @param mat the other matrix
+         * @return true if equal
+         */
+        bool operator==(const Matrix &mat)const noexcept {
+            for(auto itr1 = m_data.begin(),
+                     itr2 = mat.m_data.begin();
+                 itr1 != m_data.end();
+                 ++itr1,++itr2){
+                if(*itr1 != *itr2){
+                    return false;
+                }
+            }
+            return true;
+        }
+        bool operator!=(const Matrix &mat)const noexcept {
+            return !(*this == mat);
+        }
+
 
         /**@name product
          * @brief compute the product of two matrices
@@ -274,6 +336,99 @@ namespace xmath{
         template <size_t Col2>
         Matrix<Type,Row,Col2> operator%(const Matrix<Type,Col,Col2> &mat)const noexcept{
             return product(mat);
+        }
+
+        /**@name cofactor
+         * @brief get an element's cofactor
+         * @warning Row and Col must be greater than 1
+         * @tparam Type2 IGNORE
+         * @tparam Row2 IGNORE
+         * @tparam Col2 IGNORE
+         * @param x element's x coordinate
+         * @param y element's y coordinate
+         * @return the cofactor
+         */
+        template<class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
+        auto cofactor(size_t x,size_t y)const noexcept
+            -> std::enable_if_t<(Row2 > 1 && Col2 > 1),Matrix<Type2,Row2-1,Col2-1>>{
+            Matrix<Type2,Row2-1,Col2-1> res;
+            size_t k = 0;
+            for(size_t i = 0;i < Row;++i){
+                for(size_t j = 0;j < Col;++j){
+                    if(i == x || j == y)
+                        continue;
+                    res[k++] = (*this)(i,j);
+                }
+            }
+            return res;
+        }
+
+        /**@name det
+         * @brief compute the determinant
+         * @warning only valid for square matrix
+         * @return the determinant
+         */
+        template <class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
+        auto det()const noexcept
+        -> std::enable_if_t<Row2 == 1 && Col2 == 1,Type2>{
+            return m_data[0];
+        }
+        template <class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
+        auto det()const noexcept
+        -> std::enable_if_t<Row2 == 2 && Col2 == 2,Type2>{
+            return m_data[0] * m_data[3] - m_data[2] * m_data[1];
+        }
+        template <class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
+        auto det()const noexcept
+        -> std::enable_if_t<Row2 == 3 && Col2 == 3,Type2>{
+            return    (*this)(0,0) * (*this)(1,1) * (*this)(2,2)
+                     +(*this)(0,1) * (*this)(1,2) * (*this)(2,0)
+                     +(*this)(0,2) * (*this)(1,0) * (*this)(2,1)
+                     -(*this)(0,0) * (*this)(1,2) * (*this)(2,1)
+                     -(*this)(0,1) * (*this)(1,0) * (*this)(2,2)
+                     -(*this)(0,2) * (*this)(1,1) * (*this)(2,0);
+        }
+        template <class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
+        auto det()const noexcept
+        -> std::enable_if_t<(Row2 == Col2 && Row2 > 3 && Col2 > 3),Type2>{
+            Type2 res = 0.0;
+            for(size_t i = 0; i < Row2;++i){
+                res += (*this)(0,i) * cofactor(0,i).det() * (i % 2 == 0 ? 1.0 : -1.0);
+            }
+            return res;
+        }
+
+        /**@name adjoint
+         * @brief get the adjoint
+         * @warning only valid for square matrix
+         * @tparam Type2 IGNORE
+         * @tparam Row2 IGNORE
+         * @tparam Col2 IGNORE
+         * @return the adjoint matrix
+         */
+        template <class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
+        auto adjoint()const noexcept
+            -> std::enable_if_t<Row2 == Col2,Matrix<Type2,Row2,Col2>>{
+            Matrix<Type2,Row2,Col2> res;
+            for(int i = 0;i < Row2;++i){
+                for(int j = 0;j < Col2;++j){
+                    res(i,j) = (i + j) % 2 == 1 ? -cofactor(i,j).det() : cofactor(i,j).det();
+                }
+            }
+            return res.transpose();
+        }
+
+        /**@name inverse
+         * @brief get the inverse matrix
+         * @tparam Type2 IGNORE
+         * @tparam Row2 IGNORE
+         * @tparam Col2 IGNORE
+         * @return the inverse matrix
+         */
+        template <class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
+        auto inverse()const noexcept
+        -> std::enable_if_t<Row2 == Col2,Matrix<Type2,Row2,Col2>>{
+            return adjoint() / det();
         }
 
         /**@name dot

@@ -115,11 +115,27 @@ CASE_BEGIN(test4)
         2
     };
     auto m2 = Matrix<float,2,2>{
-        1,2,
-        3,4
+        2,2,
+        3,5
     };
+    auto m3 = Matrix<float,3,3>{
+        2,3,4,
+        1,3,5,
+        3,3,7
+     };
+    auto m4 = Matrix<float,4,4>{
+        1,3,5,7,
+        7,8,5,3,
+        2,1,2,3,
+        3,3,3,1
+    };
+    INFO("m400\n",m4.cofactor(1,1));
     INFO("det(m1):\n",m1.det());
     INFO("det(m2):\n",m2.det());
+    INFO("det(m3):\n",m3.det());
+    INFO("det(m4):\n",m4.det());
+    INFO("adjoint(m4):\n",m4.adjoint());
+    INFO("inverse(m4):\n",m4.inverse());
 CASE_END
 
 RUN(test4)
