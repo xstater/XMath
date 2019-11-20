@@ -23,6 +23,10 @@ namespace xmath{
         struct is_row_vector<1,Col>{
             enum{ value = true };
         };
+        template <>
+        struct is_row_vector<1,1>{
+            enum{ value = true };
+        };
 
         ///is_col_vector
         template <size_t Row,size_t Col>
@@ -30,14 +34,12 @@ namespace xmath{
             enum{ value = false };
         };
         template <size_t Row>
-        struct is_row_vector<Row,1>{
+        struct is_col_vector<Row,1>{
             enum{ value = true };
         };
-
-        ///is_vector
-        template <size_t Row,size_t Col>
-        struct is_vector{
-            enum{ value = is_row_vector<Row,Col>::value || is_col_vector<Row,Col>::value };
+        template <>
+        struct is_col_vector<1,1>{
+            enum{ value = true };
         };
 
         ///get_vector_length
@@ -52,6 +54,28 @@ namespace xmath{
         template <size_t Col>
         struct get_vector_length<1,Col>{
             enum{ value = Col };
+        };
+        template <>
+        struct get_vector_length<1,1>{
+            enum{ value = 1 };
+        };
+
+        ///is_vector
+        template <size_t Row,size_t Col>
+        struct is_vector{
+            enum{ value = false };
+        };
+        template <size_t Row>
+        struct is_vector<Row,1>{
+            enum{ value = true };
+        };
+        template <size_t Col>
+        struct is_vector<1,Col>{
+            enum{ value = true };
+        };
+        template <>
+        struct is_vector<1,1>{
+            enum{ value = true };
         };
 
         ///is_square_matrix

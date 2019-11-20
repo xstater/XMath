@@ -6,4 +6,6 @@ include_directories(
 		./
 		./vmath)
 
+set(CMAKE_CXX_STANDARD 14)
+
 add_executable(test1 tests/test1.cpp)

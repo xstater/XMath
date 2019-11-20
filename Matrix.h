@@ -231,9 +231,29 @@ namespace xmath{
             return (*this = *this / mat);
         }
 
+        /**@name det
+         * @brief compute the determinant
+         * @warning only valid for square matrix
+         * @return the determinant
+         */
+        auto det()const noexcept
+            -> std::enable_if_t<is_square_matrix_v<Row,Col>,Type>{
+#ifdef __cpp_if_constexpr
+#define __CONSTEXPR constexpr
+#else
+#define __CONSTEXPR
+#endif
+            if __CONSTEXPR(Row == 1){
+                return m_data[0];
+            }else if __CONSTEXPR(Row == 2){
+                return m_data[0] * m_data[3] - m_data[2] * m_data[1];
+            }
+#undef __CONSTEXPR
+        }
 
         /**@name product
          * @brief compute the product of two matrices
+         * @warning Be careful the condition of Product
          * @tparam Col2 the other matrix's Col
          * @param mat The other mat
          * @return the answer matrix
@@ -250,8 +270,9 @@ namespace xmath{
             }
             return res;
         }
+        ///operator% 's priority is same as operator*
         template <size_t Col2>
-        Matrix<Type,Row,Col2> operator&(const Matrix<Type,Col,Col2> &mat)const noexcept{
+        Matrix<Type,Row,Col2> operator%(const Matrix<Type,Col,Col2> &mat)const noexcept{
             return product(mat);
         }
 
@@ -305,7 +326,7 @@ namespace xmath{
             Matrix<Type,Col,Row> res;
             for(size_t i = 0; i < Row;++i){
                 for(size_t j = 0; j < Col;++j){
-                    res(j,i) = this->operator()(i,j);
+                    res(j,i) = (*this)(i,j);
                 }
             }
             return res;

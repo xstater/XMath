@@ -61,35 +61,65 @@
 //CASE_END
 //
 //RUN(test2)
+//
+//CASE_BEGIN(test3)
+//    using namespace xmath;
+//    auto m1 = Matrix<float,1,3>({
+//        1,3,5
+//    });
+//    auto m2 = Matrix<float,3,1>({
+//        3,
+//        2,
+//        1
+//    });
+//    INFO("[1,3,5] `dot` [3;2;1] = ",m2.dot(m1));
+//    INFO("[1,3,5] `cross` [3;2;1] = ",m1.cross(m2));
+//    auto m3 = Matrix<float,2,3>({
+//        1,2,3,
+//        4,5,6
+//    });
+//    auto m4 = Matrix<float,3,4>({
+//        1,2,3,4,
+//        5,6,7,8,
+//        2,3,4,5
+//    });
+////    INFO("m3 product m4:\n",m3.product(m4));
+//    INFO("m3 product m4:\n",m3 % m4);
+//
+//    //m3.dot(m2);
+//    //m2.dot(m3);
+//
+//    auto v1 = Matrix<float,1,3>{
+//        1,2,3
+//    };
+//    auto v2 = Matrix<float,3,1>{
+//        3,
+//        4,
+//        5
+//    };
+//    INFO("v1 * v2:\n",v1 % v2);
+//    INFO("v2 * v1:\n",v2 % v1);
+//    auto scalar = Matrix<float,1,1>{3};
+//    INFO("is_scalar:",is_scalar_v<1,1>);
+//    INFO("is_vector:",is_vector_v<1,1>);
+//    INFO("length:",get_vector_length_v<1,1>);
+//    INFO("is_square:",is_square_matrix_v<1,1>);
+//    INFO("scalar:",scalar);
+//CASE_END
+//
+//RUN(test3)
 
-CASE_BEGIN(test3)
+CASE_BEGIN(test4)
     using namespace xmath;
-    auto m1 = Matrix<float,1,3>({
-        1,3,5
-    });
-    auto m2 = Matrix<float,3,1>({
-        3,
-        2,
-        1
-    });
-    INFO("[1,3,5] `dot` [3;2;1] = ",m2.dot(m1));
-    INFO("[1,3,5] `cross` [3;2;1] = ",m1.cross(m2));
-    auto m3 = Matrix<float,2,3>({
-        1,2,3,
-        4,5,6
-    });
-    auto m4 = Matrix<float,3,4>({
-        1,2,3,4,
-        5,6,7,8,
-        2,3,4,5
-    });
-//    INFO("m3 product m4:\n",m3.product(m4));
-    INFO("m3 product m4:\n",m3 & m4);
-
-    //m3.dot(m2);
-    //m2.dot(m3);
+    auto m1 = Matrix<float,1,1>{
+        2
+    };
+    auto m2 = Matrix<float,2,2>{
+        1,2,
+        3,4
+    };
+    INFO("det(m1):\n",m1.det());
+    INFO("det(m2):\n",m2.det());
 CASE_END
 
-
-
-RUN(test3)
+RUN(test4)
