@@ -8,6 +8,10 @@
 #include <cmath>
 #include "Helper.h"
 
+#ifndef XMATH_EPS
+#define XMATH_EPS 1e-5
+#endif
+
 namespace xmath{
     static const size_t Dynamic = 0;
     enum class Direction{
@@ -187,6 +191,108 @@ namespace xmath{
             return m_data.data();
         }
 
+        /**@name identity
+         * @brief set matrix as a identity
+         * @tparam Type2 IGNORE
+         * @tparam Row2 IGNORE
+         * @tparam Col2 IGNORE
+         * @return the identity matrix
+         */
+        template <class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
+        auto identity()
+            -> std::enable_if_t<Row2 == Col2,Matrix<Type2,Row2,Col2>>{
+            Matrix<Type2,Row2,Col2> res;
+            for(size_t i = 0;i < Row2;++i){
+                res(i,i) = 1;
+            }
+            return res;
+        }
+
+        /**@name translate
+         * @brief get a translation from the vector
+         * @tparam Type2 IGNORE
+         * @tparam Row2 IGNORE
+         * @tparam Col2 IGNORE
+         * @return the translation matrix
+         */
+        template <class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
+        auto translate()
+        -> std::enable_if_t<get_vector_length_v<Row2,Col2> == 3,Matrix<Type,4,4>>{
+            return Matrix<Type,4,4>{
+                1,0,0,m_data[0],
+                0,1,0,m_data[1],
+                0,0,1,m_data[2],
+                0,0,0,1
+            };
+        }
+
+        /**@name scale
+         * @brief get the scale matrix
+         * @tparam Type2 IGNORE
+         * @tparam Row2 IGNORE
+         * @tparam Col2 IGNORE
+         * @return the scale matrix
+         */
+        template <class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
+        auto scale()
+        -> std::enable_if_t<get_vector_length_v<Row2,Col2> == 3,Matrix<Type,4,4>>{
+            return Matrix<Type,4,4>{
+                    m_data[0],0        ,0        ,0,
+                    0        ,m_data[1],0        ,0,
+                    0        ,0        ,m_data[2],0,
+                    0        ,0        ,0        ,1
+            };
+        }
+
+        /**@name rotate
+         * @brief get a rotation matrix which can rotate a vector surround by this vector
+         * @warning only for 3d vector
+         * @tparam Type2 IGNORE
+         * @tparam Row2 IGNORE
+         * @tparam Col2 IGNORE
+         * @param theta the angle
+         * @return the rotation matrix
+         */
+        template <class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
+        auto rotate(Type theta)
+        -> std::enable_if_t<get_vector_length_v<Row2,Col2> == 3,Matrix<Type,4,4>>{
+            auto tmp = normalize();
+            auto u = tmp[0];
+            auto v = tmp[1];
+            auto w = tmp[2];
+            //todo:need more tests
+            return Matrix<Type2,4,4>{
+                u*u+(1-u*u)*cos(theta)         ,u*v*(1-cos(theta))-w*sin(theta),u*w*(1-cos(theta))+v*sin(theta),0,
+                u*v*(1-cos(theta))+w*sin(theta),v*v+(1-v*v)*cos(theta)         ,v*w*(1-cos(theta))-u*sin(theta),0,
+                u*w*(1-cos(theta))-v*sin(theta),v*w*(1-cos(theta))+u*sin(theta),         w*w+(1-w*w)*cos(theta),0,
+                0                              ,0                              ,0                              ,1
+            };
+        }
+
+        /**@name rotate
+        * @brief get a rotation matrix from a quaternion
+        * @warning only for Quaternion(4d-row-vector)
+        * @tparam Type2 IGNORE
+        * @tparam Row2 IGNORE
+        * @tparam Col2 IGNORE
+        * @return the rotation matrix
+        */
+        template <class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
+        auto rotate()
+        -> std::enable_if_t<is_row_vector_v<Row2,Col2> && get_vector_length_v<Row2,Col2> == 4,Matrix<Type,4,4>>{
+            auto tmp = normalize();
+            auto x = tmp[0];
+            auto y = tmp[1];
+            auto z = tmp[2];
+            auto w = tmp[3];
+            //todo:need more tests
+            return Matrix<Type2,4,4>{
+                //todo
+            };
+        }
+
+
+
         /**@name operator+
          * @brief Add two matrices
          * @param mat The other matrix
@@ -322,7 +428,7 @@ namespace xmath{
                      itr2 = mat.m_data.begin();
                  itr1 != m_data.end();
                  ++itr1,++itr2){
-                if(*itr1 != *itr2){
+                if(std::abs(*itr1 - *itr2) > XMATH_EPS){
                     return false;
                 }
             }
@@ -566,6 +672,26 @@ namespace xmath{
             };
         }
 
+        /**@name cross
+         * @brief compute two quaternion' cross product
+         * @tparam Row2 IGNORE
+         * @tparam Col2 IGNORE
+         * @param qut the quaternion
+         * @return the cross product quaternion
+         */
+        template <size_t Row2,size_t Col2>
+        auto cross(const Matrix<Type,Row2,Col2> &qut)const noexcept
+        -> std::enable_if_t<
+                get_vector_length_v<Row,Col> == 4 && get_vector_length_v<Row2,Col2> == 4,
+                Matrix<Type,1,4>> {
+            return Matrix<Type,1,4>{
+                m_data[3] * qut[0] + m_data[0] * qut[3] + m_data[2] * qut[1] - m_data[1] * qut[2],
+                m_data[3] * qut[1] + m_data[1] * qut[3] + m_data[0] * qut[2] - m_data[2] * qut[0],
+                m_data[3] * qut[2] + m_data[2] * qut[3] + m_data[1] * qut[0] - m_data[0] * qut[1],
+                m_data[3] * qut[3] - m_data[0] * qut[0] - m_data[1] * qut[1] - m_data[2] * qut[2]
+            };
+        }
+
         /**@name length
          * @brief get the length of this vector
          * @tparam Type2 IGONRE
@@ -720,6 +846,12 @@ namespace xmath{
     using Vector2ui = Vector<unsigned int,2>;
     using Vector3ui = Vector<unsigned int,3>;
     using Vector4ui = Vector<unsigned int,4>;
+
+    ///xyzw
+    using Quaternionf = RowVector<float,4>;
+    using Quaterniond = RowVector<double,4>;
+    using Quaternioni = RowVector<int,4>;
+    using Quaternionui = RowVector<unsigned int,4>;
 
     using Matrix2x2f = Matrix<float,2,2>;
     using Matrix2x3f = Matrix<float,2,3>;

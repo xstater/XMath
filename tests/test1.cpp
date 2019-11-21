@@ -155,7 +155,26 @@ CASE_BEGIN(test4)
     INFO("row(m4,1):\n",m4.row(1));
     INFO("col(m4,1):\n",m4.col(1));
 //    INFO("v3.x = ",v3.x);
-    INFO(sizeof(Matrix3f));
+    auto v = Vector4d{
+        2,
+        2,
+        2,
+        1
+    };
+    auto id = Matrix4d().identity();
+    auto tl = Vector3d{1,2,3}.translate();
+    auto sc = Vector3d{2,2,2}.scale();
+    INFO("v:\n",v);
+    INFO("tl:\n",tl);
+    INFO("sc:\n",sc);
+    INFO("tl % v:\n",tl % v);
+    INFO("sc % v:\n",sc % v);
+    INFO("id:\n",id);
+    INFO("rotm1:\n",Vector3d{0,0,1}.rotate(1));
+    auto q1 = Quaterniond{4,2,1,2};//xyzw
+    auto q2 = Quaterniond{2,2,1,3};//xyzw
+    INFO("q1.normalize():\n",q1.normalize());
+    INFO("q1 cross q2:\n",q1.cross(q2));
 CASE_END
 
 RUN(test4)
