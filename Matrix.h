@@ -31,7 +31,7 @@ namespace xmath{
 
         static Matrix createIdentity(){
             Matrix res;
-            for(int i = 0;i < Row;++i){
+            for(size_t i = 0;i < Row;++i){
                 res(i,i) = 1;
             }
             return res;
