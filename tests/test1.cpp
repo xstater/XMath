@@ -123,6 +123,15 @@ CASE_BEGIN(test4)
         1,3,5,
         3,3,7
      };
+    auto v3 = Vector3f{
+        1,
+        2,
+        4
+    };
+    auto v4 = Matrix2x3f{
+        1,2,3,
+        3,4,5
+    };
     auto m4 = Matrix<float,4,4>{
         1,3,5,7,
         7,8,5,3,
@@ -136,6 +145,16 @@ CASE_BEGIN(test4)
     INFO("det(m4):\n",m4.det());
     INFO("adjoint(m4):\n",m4.adjoint());
     INFO("inverse(m4):\n",m4.inverse());
+    INFO("extend(m3,v3,right):\n",m3.extend(v3));
+    INFO("extend(m3,v3,left):\n",m3.extend<Direction::left>(v3));
+    INFO("extend(m3,v4,up):\n",m3.extend<Direction::up>(v4));
+    INFO("extend(m3,v4,down):\n",m3.extend<Direction::down>(v4));
+    INFO("length(v3):\n",v3.length());
+    INFO("length2(v3):\n",v3.length2());
+    INFO("normalize(v3):\n",v3.normalize());
+    INFO("row(m4,1):\n",m4.row(1));
+    INFO("col(m4,1):\n",m4.col(1));
+//    INFO("v3.x = ",v3.x);
 CASE_END
 
 RUN(test4)

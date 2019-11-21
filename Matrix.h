@@ -5,12 +5,17 @@
 #include <array>
 #include <initializer_list>
 #include <type_traits>
+#include <cmath>
 #include "Helper.h"
-
-#include <XTest/XTest.h>
 
 namespace xmath{
     static const size_t Dynamic = 0;
+    enum class Direction{
+        right,
+        left,
+        up,
+        down
+    };
 
     /**@name Matrix
      * @brief class Matrix
@@ -131,6 +136,21 @@ namespace xmath{
         }
         Matrix &operator=(const Matrix &mat) = default;
         Matrix &operator=(Matrix &&) noexcept = default;
+
+        /**@name getRowCount
+         * @brief get the Row Count
+         * @return the Row
+         */
+        constexpr size_t getRowCount()const noexcept{
+            return Row;
+        }
+        /**@name getColCount
+          * @brief get the Col Count
+          * @return the Col
+          */
+        constexpr size_t getColCount()const noexcept{
+            return Col;
+        }
 
         /**@name operator()(x,y)
          * @brief Get the (x,y) of the matrix
@@ -338,6 +358,80 @@ namespace xmath{
             return product(mat);
         }
 
+        /**@name extend
+         * @brief combine two matrices
+         * @tparam dir The direction
+         * @tparam Type2 IGNORE
+         * @tparam Row2 IGNORE
+         * @tparam Col2 IGNORE
+         * @param mat the other matrix
+         * @return the result matrix
+         */
+        template <Direction dir = Direction::right,class Type2 = Type,size_t Row2,size_t Col2>
+        auto extend(const Matrix<Type2,Row2,Col2> &mat)const noexcept
+            -> std::enable_if_t<dir == Direction::right && Row == Row2,Matrix<Type2,Row,Col+Col2>>{
+            Matrix<Type2,Row,Col+Col2> res;
+            for(size_t i = 0;i < Row;++i){
+                for(size_t j = 0;j < Col;++j){
+                    res(i,j) = (*this)(i,j);
+                }
+            }
+            for(size_t i = 0;i < Row2;++i){
+                for(size_t j = 0;j < Col2;++j){
+                    res(i,j + Col) = mat(i,j);
+                }
+            }
+            return res;
+        }
+        template <Direction dir,class Type2 = Type,size_t Row2,size_t Col2>
+        auto extend(const Matrix<Type2,Row2,Col2> &mat)const noexcept
+        -> std::enable_if_t<dir == Direction::left && Row == Row2,Matrix<Type2,Row,Col+Col2>>{
+            Matrix<Type2,Row,Col+Col2> res;
+            for(size_t i = 0;i < Row2;++i){
+                for(size_t j = 0;j < Col2;++j){
+                    res(i,j) = mat(i,j);
+                }
+            }
+            for(size_t i = 0;i < Row;++i){
+                for(size_t j = 0;j < Col;++j){
+                    res(i,j + Col2) = (*this)(i,j);
+                }
+            }
+            return res;
+        }
+        template <Direction dir,class Type2 = Type,size_t Row2,size_t Col2>
+        auto extend(const Matrix<Type2,Row2,Col2> &mat)const noexcept
+        -> std::enable_if_t<dir == Direction::up && Col == Col2,Matrix<Type2,Row+Row2,Col>>{
+            Matrix<Type2,Row+Row2,Col> res;
+            for(size_t i = 0;i < Row2;++i){
+                for(size_t j = 0;j < Col2;++j){
+                    res(i,j) = mat(i,j);
+                }
+            }
+            for(size_t i = 0;i < Row;++i){
+                for(size_t j = 0;j < Col;++j){
+                    res(i + Row2,j) = (*this)(i,j);
+                }
+            }
+            return res;
+        }
+        template <Direction dir,class Type2 = Type,size_t Row2,size_t Col2>
+        auto extend(const Matrix<Type2,Row2,Col2> &mat)const noexcept
+        -> std::enable_if_t<dir == Direction::down && Col == Col2,Matrix<Type2,Row+Row2,Col>>{
+            Matrix<Type2,Row+Row2,Col> res;
+            for(size_t i = 0;i < Row;++i){
+                for(size_t j = 0;j < Col;++j){
+                    res(i,j) = (*this)(i,j);
+                }
+            }
+            for(size_t i = 0;i < Row2;++i){
+                for(size_t j = 0;j < Col2;++j){
+                    res(i + Row,j) = mat(i,j);
+                }
+            }
+            return res;
+        }
+
         /**@name cofactor
          * @brief get an element's cofactor
          * @warning Row and Col must be greater than 1
@@ -472,6 +566,46 @@ namespace xmath{
             };
         }
 
+        /**@name length
+         * @brief get the length of this vector
+         * @tparam Type2 IGONRE
+         * @tparam Row2 IGNORE
+         * @tparam Col2 IGNORE
+         * @return the length
+         */
+        template <class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
+        auto length()const noexcept
+            -> std::enable_if_t<is_vector_v<Row2,Col2>,Type2>{
+            Type2 len = 0;
+            for(const auto &itr : m_data){
+                len += itr * itr;
+            }
+            return std::sqrt(len);
+        }
+
+        /**@name length2
+         * @brief get the square of length of this vector(avoid sqrt)
+         * @tparam Type2 IGNORE
+         * @tparam Row2 IGNORE
+         * @tparam Col2 IGNORE
+         * @return the length's square
+         */
+        template <class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
+        auto length2()const noexcept
+        -> std::enable_if_t<is_vector_v<Row2,Col2>,Type2>{
+            Type2 len = 0;
+            for(const auto &itr : m_data){
+                len += itr * itr;
+            }
+            return len;
+        }
+
+        template <class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
+        auto normalize()const noexcept
+        -> std::enable_if_t<is_vector_v<Row2,Col2>,Matrix<Type2,Row2,Col2>>{
+            return (*this) / length();
+        }
+
         /**@name transpose
          * @brief transpose a matrix
          * @details [1,2] =><br>[1]<br>[2]
@@ -508,6 +642,23 @@ namespace xmath{
                 }
             }
             return res;
+        }
+
+        /**@name row
+         * @brief get a row of this matrix
+         * @param r the row
+         * @return a row vector
+         */
+        Matrix<Type,1,Col> row(size_t r)const noexcept{
+            return sub<1,Col>(r,0);
+        }
+        /**@name col
+         * @brief get a col of this matrix
+         * @param c the col
+         * @return a col vector
+         */
+        Matrix<Type,Row,1> col(size_t c)const noexcept{
+            return sub<Row,1>(0,c);
         }
 
         /**@name operator<<
