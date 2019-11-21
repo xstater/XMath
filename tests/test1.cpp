@@ -155,6 +155,7 @@ CASE_BEGIN(test4)
     INFO("row(m4,1):\n",m4.row(1));
     INFO("col(m4,1):\n",m4.col(1));
 //    INFO("v3.x = ",v3.x);
+    INFO(sizeof(Matrix3f));
 CASE_END
 
 RUN(test4)
