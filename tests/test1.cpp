@@ -109,72 +109,86 @@
 //
 //RUN(test3)
 
-CASE_BEGIN(test4)
-    using namespace xmath;
-    auto m1 = Matrix<float,1,1>{
-        2
-    };
-    auto m2 = Matrix<float,2,2>{
-        2,2,
-        3,5
-    };
-    auto m3 = Matrix<float,3,3>{
-        2,3,4,
-        1,3,5,
-        3,3,7
-     };
-    auto v3 = Vector3f{
-        1,2,4
-    };
-    auto v4 = Vector3f{
-        1,2,3,
-    };
-    auto m4 = Matrix<float,4,4>{
-        1,3,5,7,
-        7,8,5,3,
-        2,1,2,3,
-        3,3,3,1
-    };
-    INFO("m400\n",m4.cofactor(1,1));
-    INFO("det(m1):\n",m1.det());
-    INFO("det(m2):\n",m2.det());
-    INFO("det(m3):\n",m3.det());
-    INFO("det(m4):\n",m4.det());
-    INFO("adjoint(m4):\n",m4.adjoint());
-    INFO("inverse(m4):\n",m4.inverse());
-    INFO("extend(m3,v3,right):\n",m3.extend(v3.transpose()));
-    INFO("extend(m3,v3,left):\n",m3.extend<Direction::left>(v3.transpose()));
-    INFO("extend(m3,v4,up):\n",m3.extend<Direction::up>(v4));
-    INFO("extend(m3,v4,down):\n",m3.extend<Direction::down>(v4));
-    INFO("length(v3):\n",v3.length());
-    INFO("length2(v3):\n",v3.length2());
-    INFO("normalize(v3):\n",v3.normalize());
-    INFO("row(m4,1):\n",m4.row(1));
-    INFO("col(m4,1):\n",m4.col(1));
+//CASE_BEGIN(test4)
+//    using namespace xmath;
+//    auto m1 = Matrix<float,1,1>{
+//        2
+//    };
+//    auto m2 = Matrix<float,2,2>{
+//        2,2,
+//        3,5
+//    };
+//    auto m3 = Matrix<float,3,3>{
+//        2,3,4,
+//        1,3,5,
+//        3,3,7
+//     };
+//    auto v3 = Vector3f{
+//        1,2,4
+//    };
+//    auto v4 = Vector3f{
+//        1,2,3,
+//    };
+//    auto m4 = Matrix<float,4,4>{
+//        1,3,5,7,
+//        7,8,5,3,
+//        2,1,2,3,
+//        3,3,3,1
+//    };
+//    INFO("m400\n",m4.cofactor(1,1));
+//    INFO("det(m1):\n",m1.det());
+//    INFO("det(m2):\n",m2.det());
+//    INFO("det(m3):\n",m3.det());
+//    INFO("det(m4):\n",m4.det());
+//    INFO("adjoint(m4):\n",m4.adjoint());
+//    INFO("inverse(m4):\n",m4.inverse());
+//    INFO("extend(m3,v3,right):\n",m3.extend(v3.transpose()));
+//    INFO("extend(m3,v3,left):\n",m3.extend<Direction::left>(v3.transpose()));
+//    INFO("extend(m3,v4,up):\n",m3.extend<Direction::up>(v4));
+//    INFO("extend(m3,v4,down):\n",m3.extend<Direction::down>(v4));
+//    INFO("length(v3):\n",v3.length());
+//    INFO("length2(v3):\n",v3.length2());
+//    INFO("normalize(v3):\n",v3.normalize());
+//    INFO("row(m4,1):\n",m4.row(1));
+//    INFO("col(m4,1):\n",m4.col(1));
+//
+//    auto v = Vector4d{
+//        2,2,2,1
+//    };
+//    auto id = Matrix4d().identity();
+//    auto tl = Vector3d{1,2,3}.translate();
+//    auto sc = Vector3d{2,2,2}.scale();
+//    INFO("v:\n",v);
+//    INFO("tl:\n",tl);
+//    INFO("sc:\n",sc);
+//    INFO("tl % v:\n",tl % v.transpose());
+//    INFO("sc % v:\n",sc % v.transpose());
+//    INFO("id:\n",id);
+//    INFO("rotm1:\n",Vector3d{0,0,1}.rotate(1));
+//    auto q1 = Quaterniond{4,2,1,2};//xyzw
+//    auto q2 = Quaterniond{2,2,1,3};//xyzw
+//    INFO("q1.normalize():\n",q1.normalize());
+//    INFO("q1 cross q2:\n",q1.cross(q2));
+//    INFO("q1.conjugate:\n",q1.normalize().conjugate());
+//    INFO("q1.inverse:\n",q1.normalize().inverse());
+//    INFO("unit quaternion:\n",q1.normalize().cross(q1.normalize().inverse()));
+//    INFO("q1.normalize().rotate():\n",q1.normalize().rotate());
+//    INFO("from rotation matrix:\n",Quaterniond(q1.normalize().rotate()));
+//    INFO("q1:",q1.normalize());
+//CASE_END
+//
+//RUN(test4)
 
-    auto v = Vector4d{
-        2,2,2,1
-    };
-    auto id = Matrix4d().identity();
-    auto tl = Vector3d{1,2,3}.translate();
-    auto sc = Vector3d{2,2,2}.scale();
-    INFO("v:\n",v);
-    INFO("tl:\n",tl);
-    INFO("sc:\n",sc);
-    INFO("tl % v:\n",tl % v.transpose());
-    INFO("sc % v:\n",sc % v.transpose());
-    INFO("id:\n",id);
-    INFO("rotm1:\n",Vector3d{0,0,1}.rotate(1));
-    auto q1 = Quaterniond{4,2,1,2};//xyzw
-    auto q2 = Quaterniond{2,2,1,3};//xyzw
-    INFO("q1.normalize():\n",q1.normalize());
-    INFO("q1 cross q2:\n",q1.cross(q2));
-    INFO("q1.conjugate:\n",q1.normalize().conjugate());
-    INFO("q1.inverse:\n",q1.normalize().inverse());
-    INFO("unit quaternion:\n",q1.normalize().cross(q1.normalize().inverse()));
-    INFO("q1.normalize().rotate():\n",q1.normalize().rotate());
-    INFO("from rotation matrix:\n",Quaterniond(q1.normalize().rotate()));
-    INFO("q1:",q1.normalize());
-CASE_END
+#include <iostream>
+#include "XMath.h"
 
-RUN(test4)
+using namespace std;
+using namespace xmath;
+
+int main(){
+    auto v1 = Vector4f{1,2,3,1};//a 4d float COL vector
+    auto t = Vector3f{1,1,1}.translate();//construct a Translation matrix
+    v1 = t % v1;//apply to v1 (need to transpose)
+    cout << v1 << endl;//[2,3,4,1]
+    return 0;
+}

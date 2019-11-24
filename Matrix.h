@@ -25,6 +25,10 @@ namespace xmath{
         using reverse_iterator = typename std::array<Type,Count>::reverse_iterator;
         using const_reverse_iterator = typename std::array<Type,Count>::const_reverse_iterator;
 
+        constexpr size_t count()const noexcept{
+            return Count;
+        }
+
         Matrix(){
             for(auto &itr : m_data){
                 itr = 0;

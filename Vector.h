@@ -6,20 +6,32 @@
 
 namespace xmath{
     template <class Type,size_t Length>
-    class Vector : public Matrix<Type,1,Length>{
+    class Vector : public Matrix<Type,Length,1>{
     public:
-        Vector():Matrix<Type,1,Length>(){}
-        explicit Vector(Type val):Matrix<Type,1,Length>(val){}
-        explicit Vector(const Type *ptr):Matrix<Type,1,Length>(ptr){}
+        Vector():Matrix<Type,Length,1>(){}
+        explicit Vector(Type val):Matrix<Type,Length,1>(val){}
+        explicit Vector(const Type *ptr):Matrix<Type,Length,1>(ptr){}
         template <class Iterator>
-        explicit Vector(Iterator beg,Iterator end):Matrix<Type,1,Length>(beg,end){}
-        explicit Vector(std::initializer_list<Type> list):Matrix<Type,1,Length>(list){}
-        template <class Type2,size_t Row2,size_t Col2>
-        explicit Vector(const Matrix<Type2,Row2,Col2> &matrix):Matrix<Type,1,Length>(matrix){}
+        explicit Vector(Iterator beg,Iterator end):Matrix<Type,Length,1>(beg,end){}
+        explicit Vector(std::initializer_list<Type> list):Matrix<Type,Length,1>(list){}
+        explicit Vector(const Matrix<Type,1,Length> &matrix):Matrix<Type,Length,1>(matrix){}
+        explicit Vector(const Matrix<Type,Length,1> &matrix):Matrix<Type,Length,1>(matrix){}
         Vector(const Vector &vec) = default;
         Vector(Vector &&) = default;
         ~Vector() = default;
 
+        Vector &operator=(const Matrix<Type,1,Length> &matrix){
+            for(size_t i = 0;i < Length;++i){
+                (*this)[i] = matrix[i];
+            }
+            return *this;
+        }
+        Vector &operator=(const Matrix<Type,Length,1> &matrix){
+            for(size_t i = 0;i < Length;++i){
+                (*this)[i] = matrix[i];
+            }
+            return *this;
+        }
         Vector &operator=(const Vector &mat) = default;
         Vector &operator=(Vector &&) noexcept = default;
 
@@ -91,13 +103,21 @@ namespace xmath{
             auto u = tmp[0];
             auto v = tmp[1];
             auto w = tmp[2];
-            //todo:need more tests
             return Matrix<Type2,4,4>{
                     u*u+(1-u*u)*cos(angle)         ,u*v*(1-cos(angle))-w*sin(angle),u*w*(1-cos(angle))+v*sin(angle),0,
                     u*v*(1-cos(angle))+w*sin(angle),v*v+(1-v*v)*cos(angle)         ,v*w*(1-cos(angle))-u*sin(angle),0,
                     u*w*(1-cos(angle))-v*sin(angle),v*w*(1-cos(angle))+u*sin(angle),         w*w+(1-w*w)*cos(angle),0,
                     0                              ,0                              ,0                              ,1
             };
+        }
+
+        friend std::ostream &operator<<(std::ostream &os,const Vector &vector){
+            os << '[';
+            for(size_t i = 0; i < vector.count() - 1;++i){
+                os << vector[i] << ',';
+            }
+            os << vector[vector.count() - 1] << ']';
+            return os;
         }
     };
 
