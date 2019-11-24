@@ -156,6 +156,13 @@ namespace xmath{
             }
             return ans;
         }
+        Matrix operator-()const noexcept{
+            Matrix ans;
+            for(auto i = 0;i < Count;++i){
+                ans.m_data[i] = -m_data[i];
+            }
+            return ans;
+        }
 
         Matrix operator*(const Matrix &mat)const noexcept{
             Matrix ans;
