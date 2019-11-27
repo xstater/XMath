@@ -2,7 +2,9 @@
 #include "Matrix.h"
 #include "Vector.h"
 #include "Quaternion.h"
-#include <xmmintrin.h>
+
+#define VMATH_NAMESPACE vmath
+#include <vmath.h>
 
 //CASE_BEGIN(test1)
 //    using namespace xmath;
@@ -72,9 +74,7 @@
 //    auto m2 = Vector<float,3>{
 //        3,2,1
 //    };
-//    INFO("[1,3,5] transpose:\n",m1.transpose());
-//    INFO("nothing:\n",Vector<float,3>(m1.transpose()));
-//    INFO("[1,3,5;3,2,1]:\n",m1.extend<Direction::down>(m2));
+//    INFO("[1,3,5;3,2,1]:\n",m1.toRow().extend<Direction::down>(m2.toRow()));
 //    INFO("[1,3,5] `dot` [3;2;1] = ",m2.dot(m1));
 //    INFO("[1,3,5] `cross` [3;2;1] = ",m1.cross(m2));
 //    auto m3 = Matrix<float,2,3>{
@@ -102,8 +102,8 @@
 //    };
 //    INFO("v1 * v2:\n",v1 % v2);
 //    INFO("v2 * v1:\n",v2 % v1);
-//    auto q1 = Vector<float,4>{4,2,1,3};
-//    auto q2 = Vector<float,4>{2,2,3,1};
+//    auto q1 = Vector<float,3>{4,2,1};
+//    auto q2 = Vector<float,3>{2,2,3};
 //    INFO("q1 cross q2:\n",q1.cross(q2));
 //CASE_END
 //
@@ -142,10 +142,10 @@
 //    INFO("det(m4):\n",m4.det());
 //    INFO("adjoint(m4):\n",m4.adjoint());
 //    INFO("inverse(m4):\n",m4.inverse());
-//    INFO("extend(m3,v3,right):\n",m3.extend(v3.transpose()));
-//    INFO("extend(m3,v3,left):\n",m3.extend<Direction::left>(v3.transpose()));
-//    INFO("extend(m3,v4,up):\n",m3.extend<Direction::up>(v4));
-//    INFO("extend(m3,v4,down):\n",m3.extend<Direction::down>(v4));
+//    INFO("extend(m3,v3,right):\n",m3.extend(v3.toCol()));
+//    INFO("extend(m3,v3,left):\n",m3.extend<Direction::left>(v3.toCol()));
+//    INFO("extend(m3,v4,up):\n",m3.extend<Direction::up>(v4.toRow()));
+//    INFO("extend(m3,v4,down):\n",m3.extend<Direction::down>(v4.toRow()));
 //    INFO("length(v3):\n",v3.length());
 //    INFO("length2(v3):\n",v3.length2());
 //    INFO("normalize(v3):\n",v3.normalize());
@@ -161,8 +161,8 @@
 //    INFO("v:\n",v);
 //    INFO("tl:\n",tl);
 //    INFO("sc:\n",sc);
-//    INFO("tl % v:\n",tl % v.transpose());
-//    INFO("sc % v:\n",sc % v.transpose());
+//    INFO("tl % v:\n",tl % v);
+//    INFO("sc % v:\n",sc % v);
 //    INFO("id:\n",id);
 //    INFO("rotm1:\n",Vector3d{0,0,1}.rotate(1));
 //    auto q1 = Quaterniond{4,2,1,2};//xyzw
@@ -179,16 +179,35 @@
 //
 //RUN(test4)
 
-#include <iostream>
-#include "XMath.h"
+CASE_BEGIN(vmath_comp)
+    auto x_model =
+            xmath::Vector3d{2.2,3.3,4.4}.translate()
+//          % xmath::Vector3d{1.3,2.4,6.6}.rotate()
+          % xmath::Vector3d{1,2,1}.scale();
+    auto x_vec = xmath::Vector4d{1.3,3.4,2.1,1.0};
+    auto v_model =
+            vmath::Matrix4d::createTranslation(2.2,3.3,4.4)
+//          * vmath::Matrix4d::createRotationAroundAxis(1.3,2.4,6.6)
+          * vmath::Matrix4d::createScale(1,2,1);
+    auto v_vec = vmath::Vector4d{1.3,3.4,2.1,1.0};
 
-using namespace std;
-using namespace xmath;
+    INFO("xmath:",x_model % x_vec);
+    INFO("vmath:",v_model * v_vec);
 
-int main(){
-    auto v1 = Vector4f{1,2,3,1};//a 4d float COL vector
-    auto t = Vector3f{1,1,1}.translate();//construct a Translation matrix
-    v1 = t % v1;//apply to v1
-    cout << v1 << endl;//[2,3,4,1]
-    return 0;
-}
+    INFO("r1:\n",vmath::Matrix4d::createRotationAroundAxis(23,33,41));//deg
+    INFO("r2:\n",xmath::Vector3d{0.401426,0.575959,0.715585}.rotate());//rad
+//    INFO("r1:\n",vmath::Matrix4d::createRotationAroundAxis(45,0,0));//deg
+//    INFO("r2:\n",xmath::Vector3d{0.7825398,0,0}.rotate());//rad
+
+    INFO("x-lookAt:\n",
+            xmath::Vector3d{1,1,1}.lookAt(xmath::Vector3d{0.5,0.5,0.5},xmath::Vector3d{0,1,0}));
+    INFO("v-lookAt:\n",
+            vmath::Matrix4d::createLookAt(
+                    vmath::Vector3d(1,1,1),
+                    vmath::Vector3d(0.5,0.5,0.5),
+                    vmath::Vector3d(0,1,0)));
+CASE_END
+
+RUN(vmath_comp)
+
+

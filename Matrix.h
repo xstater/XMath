@@ -197,28 +197,52 @@ namespace xmath{
         }
 
         Matrix &operator+=(const Matrix &mat)noexcept{
-            return (*this = *this + mat);
+            for(size_t i = 0;i < Count;++i){
+                m_data += mat.m_data[i];
+            }
+            return *this;
         }
         Matrix &operator-=(const Matrix &mat)noexcept {
-            return (*this = *this - mat);
+            for(size_t i = 0;i < Count;++i){
+                m_data -= mat.m_data[i];
+            }
+            return *this;
         }
         Matrix &operator*=(const Matrix &mat)noexcept{
-            return (*this = *this * mat);
+            for(size_t i = 0;i < Count;++i){
+                m_data *= mat.m_data[i];
+            }
+            return *this;
         }
         Matrix &operator/=(const Matrix &mat)noexcept{
-            return (*this = *this / mat);
+            for(size_t i = 0;i < Count;++i){
+                m_data /= mat.m_data[i];
+            }
+            return *this;
         }
         Matrix &operator+=(const Type &value)noexcept{
-            return (*this = *this + value);
+            for(size_t i = 0;i < Count;++i){
+                m_data += value;
+            }
+            return *this;
         }
         Matrix &operator-=(const Type &value)noexcept {
-            return (*this = *this - value);
+            for(size_t i = 0;i < Count;++i){
+                m_data -= value;
+            }
+            return *this;
         }
         Matrix &operator*=(const Type &value)noexcept{
-            return (*this = *this * value);
+            for(size_t i = 0;i < Count;++i){
+                m_data *= value;
+            }
+            return *this;
         }
         Matrix &operator/=(const Type &value)noexcept{
-            return (*this = *this / value);
+            for(size_t i = 0;i < Count;++i){
+                m_data /= value;
+            }
+            return *this;
         }
 
 
@@ -238,7 +262,7 @@ namespace xmath{
         }
 
         template <size_t Col2>
-        Matrix<Type,Row,Col2> product(const Matrix<Type,Col,Col2> &mat)const noexcept{
+        Matrix<Type,Row,Col2> operator%(const Matrix<Type,Col,Col2> &mat)const noexcept{
             Matrix<Type,Row,Col2> res;
             for(size_t i = 0;i < Row;++i){
                 for(size_t j = 0;j < Col2;++j){
@@ -249,12 +273,6 @@ namespace xmath{
             }
             return res;
         }
-        ///operator% 's priority is same as operator*
-        template <size_t Col2>
-        Matrix<Type,Row,Col2> operator%(const Matrix<Type,Col,Col2> &mat)const noexcept{
-            return product(mat);
-        }
-
 
         template <Direction dir = Direction::right,class Type2 = Type,size_t Row2,size_t Col2>
         auto extend(const Matrix<Type2,Row2,Col2> &mat)const noexcept
