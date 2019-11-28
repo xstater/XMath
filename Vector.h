@@ -410,7 +410,7 @@ namespace xmath{
         }
 
 
-        /**@name perspective
+        /**@name frustum
          * @note aspect,fov,near,far
          * @note      0,  1,   2,  3
          * @tparam Type2
