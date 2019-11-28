@@ -206,6 +206,22 @@ CASE_BEGIN(vmath_comp)
                     vmath::Vector3d(1,1,1),
                     vmath::Vector3d(0.5,0.5,0.5),
                     vmath::Vector3d(0,1,0)));
+
+    INFO("x-frustum:\n",
+            xmath::Vector<double,6>{6,-6,-6,6,2,3}.frustum());
+    INFO("v-frustum:\n",
+            vmath::Matrix4d::createFrustum(-6,6,-6,6,2,3));
+    INFO("x-fov:\n",xmath::Vector4d{1.0,2.0 * std::atan(3.0),2,3}.frustum());
+
+    INFO("x-ortho:\n",
+            xmath::Vector<double,6>{7,-7,-6,6,-4,4}.ortho());
+    INFO("v-ortho:\n",
+            vmath::Matrix4d::createOrtho(-6,6,-7,7,-4,4));
+
+    INFO("x-quat-rotmatrix:\n",
+            xmath::Quaterniond{2,3,4,1}.rotate());
+    INFO("v-quat-rotmatrix:\n",
+            vmath::Quaternion<double>(1,2,3,4).transform());
 CASE_END
 
 RUN(vmath_comp)

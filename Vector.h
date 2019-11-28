@@ -363,7 +363,75 @@ namespace xmath{
             return m % this->operator-().translate();
         }
 
-        iterator begin()noexcept{
+        /**@name frustum
+         * @note top,bottom,left,right,near,far
+         * @note   0,     1,   2,    3,   4,  5
+         * @tparam Type2
+         * @tparam Count2
+         * @return the frustum matrix
+         */
+        template <class Type2 = Type,size_t Count2 = Count>
+        auto frustum()
+        -> std::enable_if_t<Count == 6 && Count2 == 6,Matrix<Type,4,4>>{
+            Type2 inv_width = 1.0 / (m_data[3] - m_data[2]);
+            Type2 inv_height = 1.0 / (m_data[0] - m_data[1]);
+            Type2 inv_depth = 1.0 / (m_data[5] - m_data[4]);
+
+            Type2 double_near = 2.0 * m_data[4];
+
+            return Matrix<Type,4,4>{
+                double_near * inv_width,                       0, (m_data[2] + m_data[3]) * inv_width ,                                    0,
+                                      0,double_near * inv_height, (m_data[0] + m_data[1]) * inv_height,                                    0,
+                                      0,                       0,-(m_data[5] + m_data[4]) * inv_depth ,- double_near * m_data[5] * inv_depth,
+                                      0,                       0,                                 -1.0,                                    0
+            };
+        }
+
+        /**@name ortho
+         * @note top,bottom,left,right,near,far
+         * @note   0,     1,   2,    3,   4,  5
+         * @tparam Type2
+         * @tparam Count2
+         * @return the frustum matrix
+         */
+        template <class Type2 = Type,size_t Count2 = Count>
+        auto ortho()
+        -> std::enable_if_t<Count == 6 && Count2 == 6,Matrix<Type,4,4>>{
+            Type2 inv_width = 1.0 / (m_data[3] - m_data[2]);
+            Type2 inv_height = 1.0 / (m_data[0] - m_data[1]);
+            Type2 inv_depth = 1.0 / (m_data[5] - m_data[4]);
+
+            return Matrix<Type,4,4>{
+                    2 * inv_width,             0,             0,-(m_data[3] + m_data[2]) * inv_width ,
+                                0,2 * inv_height,             0,-(m_data[0] + m_data[1]) * inv_height,
+                                0,             0,-2 * inv_depth,-(m_data[4] + m_data[5]) * inv_depth ,
+                                0,             0,             0,                                    1
+            };
+        }
+
+
+        /**@name perspective
+         * @note aspect,fov,near,far
+         * @note      0,  1,   2,  3
+         * @tparam Type2
+         * @tparam Count2
+         * @return the frustum matrix
+         */
+        template <class Type2 = Type,size_t Count2 = Count>
+        auto frustum()
+        -> std::enable_if_t<Count == 4 && Count2 == 4,Matrix<Type,4,4>>{
+            Type2 cot_fov2 = 1.0 / std::tan(m_data[1] / 2.0);
+            Type2 depth = m_data[2] - m_data[3];//near - far
+            //todo:need more tests
+            return Matrix < Type,4,4 > {
+                cot_fov2 / m_data[0],       0,                              0,                                0,
+                                   0,cot_fov2,                              0,                                0,
+                                   0,       0,(m_data[2] + m_data[3]) / depth,2 * m_data[2] * m_data[3] / depth,
+                                   0,       0,                             -1,                                0
+            };
+        }
+
+            iterator begin()noexcept{
             return m_data.begin();
         }
         iterator end()noexcept {
@@ -410,6 +478,15 @@ namespace xmath{
     private:
         std::array<Type,Count> m_data;
     };
+
+    template <size_t Count>
+    using Vectorf = Vector<float,Count>;
+    template <size_t Count>
+    using Vectord = Vector<double,Count>;
+    template <size_t Count>
+    using Vectori = Vector<int,Count>;
+    template <size_t Count>
+    using Vectorui = Vector<unsigned int,Count>;
 
     using Vector2f = Vector<float,2>;
     using Vector3f = Vector<float,3>;
