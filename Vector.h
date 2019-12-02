@@ -94,6 +94,13 @@ namespace xmath{
             return m_data.data();
         }
 
+        Type *data()noexcept {
+            return m_data.data();
+        }
+        const Type *data()const noexcept {
+            return m_data.data();
+        }
+
         Matrix<Type,1,Count> toRow()const noexcept{
             return Matrix<Type,1,Count>(m_data.data());
         }

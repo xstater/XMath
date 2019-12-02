@@ -222,6 +222,29 @@ CASE_BEGIN(vmath_comp)
             xmath::Quaterniond{2,3,4,1}.rotate());
     INFO("v-quat-rotmatrix:\n",
             vmath::Quaternion<double>(1,2,3,4).transform());
+
+    auto vortho = vmath::Matrix4d::createOrtho(5,3,1,2,4,5);
+    INFO("v-mat-raw:\n",vortho);
+    for(int i = 0;i < 16;++i){
+        std::cout << vortho[i] << ' ';
+    }
+    std::cout << std::endl;
+    auto xortho = xmath::Vector<double,6>{2,1,5,3,4,5}.ortho();
+    INFO("x-mat-raw:\n",xortho);
+        {
+            xtest::Timer timer("raw");
+            for(auto itr : xortho){
+                std::cout << itr << ' ';
+            }
+        }
+    std::cout << std::endl;
+        {
+            xtest::Timer timer("transpose");
+            for(int i = 0;i < 16;++i){
+                std::cout << xortho.transpose().data()[i] << ' ';
+            }
+        }
+    std::cout << '\n';
 CASE_END
 
 RUN(vmath_comp)

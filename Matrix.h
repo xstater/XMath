@@ -116,6 +116,13 @@ namespace xmath{
             return m_data.data();
         }
 
+        Type *data()noexcept {
+            return m_data.data();
+        }
+        const Type *data()const noexcept {
+            return m_data.data();
+        }
+
         template <class Type2 = Type,size_t Row2 = Row,size_t Col2 = Col>
         auto identity()
         -> std::enable_if_t<Row2 == Col2,Matrix<Type2,Row2,Col2>>{
