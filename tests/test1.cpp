@@ -245,6 +245,9 @@ CASE_BEGIN(vmath_comp)
             }
         }
     std::cout << '\n';
+
+    xortho = xortho.transpose();
+    ASSERT_SEQ(vortho.data,xortho);
 CASE_END
 
 RUN(vmath_comp)
